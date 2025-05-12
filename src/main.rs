@@ -19,15 +19,7 @@ fn volume_window(app: &gtk::Application) {
         .show_text(true)
         .fraction(0.75)
         .build();
-    let window = gtk::ApplicationWindow::builder()
-        .application(app)
-        .title("glimpsosd")
-        .css_name("glimpsosd")
-        .decorated(false)
-        .resizable(false)
-        .focusable(false)
-        .child(&progressbar)
-        .build();
+    let window = osd_window(app);
     window.present();
 
     let window_weak = window.downgrade();
@@ -37,6 +29,17 @@ fn volume_window(app: &gtk::Application) {
         }
         glib::ControlFlow::Break
     });
+}
+
+fn osd_window(app: &gtk::Application) -> gtk::ApplicationWindow {
+    gtk::ApplicationWindow::builder()
+        .application(app)
+        .title("glimpsosd")
+        .css_name("glimpsosd")
+        .decorated(false)
+        .resizable(false)
+        .focusable(false)
+        .build()
 }
 
 fn main() {
