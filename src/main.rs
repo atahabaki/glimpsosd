@@ -5,7 +5,7 @@ use std::time::Duration;
 
 const APP_ID: &str = "dev.atahabaki.glimpsosd";
 
-fn volume_window(app: &gtk::Application) {
+fn on_activate(app: &gtk::Application) {
     let provider = CssProvider::new();
     provider.load_from_path("examples/style.css");
     gtk::style_context_add_provider_for_display(
@@ -44,6 +44,6 @@ fn osd_window(app: &gtk::Application) -> gtk::ApplicationWindow {
 
 fn main() {
     let app = gtk::Application::builder().application_id(APP_ID).build();
-    app.connect_activate(volume_window);
+    app.connect_activate(on_activate);
     app.run();
 }
