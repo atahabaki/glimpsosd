@@ -13,12 +13,7 @@ fn on_activate(app: &gtk::Application) {
         &provider,
         gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
     );
-    let progressbar = gtk::ProgressBar::builder()
-        .css_classes(vec!["volume", "max"])
-        .text("  @DEFAULT_SINK@: .75")
-        .show_text(true)
-        .fraction(0.75)
-        .build();
+    let progressbar = osd_volume_progressbar();
     let window = osd_window(app);
     window.present();
 
@@ -39,6 +34,15 @@ fn osd_window(app: &gtk::Application) -> gtk::ApplicationWindow {
         .decorated(false)
         .resizable(false)
         .focusable(false)
+        .build()
+}
+
+fn osd_volume_progressbar() -> gtk::ProgressBar {
+    gtk::ProgressBar::builder()
+        .css_classes(vec!["volume", "max"])
+        .text("  @DEFAULT_SINK@: .75")
+        .show_text(true)
+        .fraction(0.75)
         .build()
 }
 
