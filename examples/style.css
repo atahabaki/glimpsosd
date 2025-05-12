@@ -1,0 +1,116 @@
+/* GlimpseOSD Style Example
+ * This is an example of how to style GlimpseOSD using CSS.
+ * The colors are based on the Catppuccin Mocha color scheme.
+ * You can customize the colors and styles to your liking.
+ * The font used is CaskaydiaCove Nerd Font.
+ * To use this style, save it as style.css and place it in the same directory as GlimpseOSD.
+ * You can then run GlimpseOSD with the --style option to use this style.
+ * Example: ./glimpseosd --style /path/to/style.css
+ * Or on Windows: glimpseosd.exe --style C:\path\to\style.css
+ * Just kidding this OSD is just for linux. I hate win & alternatives.
+ * You should also need to hate them.
+*/
+:root {
+    --rosewater: #f5e0dc;
+    --flamingo: #f2cdcd;
+    --pink: #f5c2e7;
+    --mauve: #cba6f7;
+    --red: #f38ba8;
+    --maroon: #eba0ac;
+    --peach: #fab387;
+    --yellow: #f9e2af;
+    --green: #a6e3a1;
+    --teal: #94e2d5;
+    --sky: #89dceb;
+    --sapphire: #74c7ec;
+    --blue: #89b4fa;
+    --lavender: #b4befe;
+    --text: #cdd6f4;
+    --subtext1: #bac2de;
+    --subtext0: #a6adc8;
+    --overlay2: #9399b2;
+    --overlay1: #7f849c;
+    --overlay0: #6c7086;
+    --surface2: #585b70;
+    --surface1: #45475a;
+    --surface0: #313244;
+    --base: #1e1e2e;
+    --mantle: #181825;
+    --crust: #11111b;
+}
+
+glimpsosd.background {
+    background-color: var(--crust);
+}
+
+glimpsosd label.info,
+glimpsosd progressbar.volume text {
+    font-family: 'CaskaydiaCove Nerd Font';
+    font-size: 16px;
+    font-weight: bold;
+}
+
+glimpsosd label.info {
+    margin: 20px;
+}
+
+glimpsosd label.info.volume.mute,
+glimpsosd progressbar.volume.mute text {
+    color: var(--red);
+}
+
+glimpsosd label.info.volume.min,
+glimpsosd progressbar.volume.min text {
+    color: var(--yellow);
+}
+
+glimpsosd label.info.volume.med,
+glimpsosd progressbar.volume.med text {
+    color: var(--peach);
+}
+
+glimpsosd label.info.volume.max,
+glimpsosd progressbar.volume.max text {
+    color: var(--green);
+}
+
+glimpsosd progressbar.volume {
+    color: var(--text);
+    margin: 20px;
+}
+
+glimpsosd progressbar.volume text {
+    margin: 0 0 20px;
+    color: var(--text);
+}
+
+glimpsosd progressbar.volume trough {
+    background-color: var(--base);
+    border: none;
+}
+
+glimpsosd progressbar.volume trough progress {
+    background-color: var(--text);
+}
+
+glimpsosd progressbar.volume trough,
+glimpsosd progressbar.volume trough progress {
+    border-radius: 10px;
+    padding: 5px 0;
+}
+
+glimpsosd progressbar.volume.mute trough progress {
+    background-color: var(--red);
+}
+
+glimpsosd progressbar.volume.min trough progress {
+    background-color: var(--yellow);
+}
+
+glimpsosd progressbar.volume.med trough progress {
+    background-color: var(--peach);
+}
+
+glimpsosd progressbar.volume.max trough progress {
+    background-color: var(--green);
+}
