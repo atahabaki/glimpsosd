@@ -13,8 +13,9 @@ fn on_activate(app: &gtk::Application) {
         &provider,
         gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
     );
-    let progressbar = osd_volume_progressbar();
+    let child = osd_volume_progressbar();
     let window = osd_window(app);
+    window.set_child(Some(&child));
     window.present();
 
     let window_weak = window.downgrade();
