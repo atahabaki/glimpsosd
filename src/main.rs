@@ -19,7 +19,7 @@ impl GlimpsOSD {
     fn osd_window(app: &gtk::Application) -> gtk::ApplicationWindow {
         gtk::ApplicationWindow::builder()
             .application(app)
-            .title("glimpsosd")
+            .title("GlimpsOSD")
             .css_name("glimpsosd")
             .decorated(false)
             .resizable(false)
