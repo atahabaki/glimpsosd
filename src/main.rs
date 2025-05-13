@@ -1,6 +1,7 @@
 use gtk::CssProvider;
 use gtk::glib;
 use gtk::prelude::*;
+use gtkls::{Layer, LayerShell, Edge};
 use std::time::Duration;
 
 const APP_ID: &str = "dev.atahabaki.glimpsosd";
@@ -53,6 +54,10 @@ impl GlimpsOSD {
         let child = Self::osd_volume_progressbar();
         let window = Self::osd_window(app);
         window.set_child(Some(&child));
+        window.init_layer_shell();
+        window.set_layer(Layer::Overlay);
+        window.set_anchor(Edge::Bottom, true);
+        window.set_margin(Edge::Bottom, 50);
         window.present();
 
         let window_weak = window.downgrade();
