@@ -1,7 +1,7 @@
 use gtk::CssProvider;
 use gtk::glib;
 use gtk::prelude::*;
-use gtkls::{Layer, LayerShell, Edge};
+use gtkls::{Edge, Layer, LayerShell};
 use std::time::Duration;
 
 const APP_ID: &str = "dev.atahabaki.glimpsosd";
@@ -68,10 +68,14 @@ impl GlimpsOSD {
             glib::ControlFlow::Break
         });
     }
+
+    fn run(&self) {
+        self.connect_activate();
+        self.app.run();
+    }
 }
 
 fn main() {
     let glimpsosd = GlimpsOSD::new();
-    glimpsosd.connect_activate();
-    glimpsosd.app.run();
+    glimpsosd.run();
 }
