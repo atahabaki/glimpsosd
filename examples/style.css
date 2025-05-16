@@ -41,6 +41,7 @@
 
 glimpsosd.background {
     background-color: var(--crust);
+    border-radius: 20px;
 }
 
 glimpsosd label.info,
@@ -55,7 +56,13 @@ glimpsosd label.info {
 }
 
 glimpsosd label.info.volume.mute,
-glimpsosd progressbar.volume.mute text {
+glimpsosd label.info.volume.min.mute,
+glimpsosd label.info.volume.med.mute,
+glimpsosd label.info.volume.max.mute,
+glimpsosd progressbar.volume.mute text,
+glimpsosd progressbar.volume.min.mute text,
+glimpsosd progressbar.volume.med.mute text,
+glimpsosd progressbar.volume.max.mute text {
     color: var(--red);
 }
 
@@ -99,7 +106,10 @@ glimpsosd progressbar.volume trough progress {
     padding: 5px 0;
 }
 
-glimpsosd progressbar.volume.mute trough progress {
+glimpsosd progressbar.volume.mute trough progress,
+glimpsosd progressbar.volume.min.mute trough progress,
+glimpsosd progressbar.volume.med.mute trough progress,
+glimpsosd progressbar.volume.max.mute trough progress {
     background-color: var(--red);
 }
 
