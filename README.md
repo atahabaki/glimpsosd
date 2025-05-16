@@ -2,8 +2,6 @@
 
 > ⚡ A blazingly fast, customizable OSD that just *glimpses* — crafted for tiling WM nerds 🧠 who crave peace ☮️, performance 🚀, and zero scripting ✨.
 
----
-
 ## 🧠 Built for the Tiling WM Nerds Who Crave a Bit of DE Comfort
 
 Let’s face it: just because we use tiling window managers doesn’t mean we don’t appreciate the comfy vibe of a full desktop environment. Most DEs come packed with OSDs that show things like:
@@ -15,8 +13,6 @@ Let’s face it: just because we use tiling window managers doesn’t mean we do
 
 Why should DE folks have all the cozy little niceties?
 
----
-
 ## 🎛️ Customization That Won’t Fry Your Brain
 
 `glimpsosd` is made for people who like **clean configs**, **zero bloat**, and **no black magic**.
@@ -26,8 +22,6 @@ Why should DE folks have all the cozy little niceties?
 * 🧠 **Scriptable behavior** — Integrates with any WM you throw at it: Sway, Hyprland, i3, bspwm... bring it on.
 
 🧘‍♀️ **Bonus:** it won’t yell at you with Python errors 🐍💥.
-
----
 
 ## 🛠️ Installation
 
@@ -41,8 +35,6 @@ cd glimpsosd
 cargo build --release
 ```
 
----
-
 ## 💖 Contribute, Chill, Repeat
 
 Spotted a bug? Be a hero — squash it for the good of modern civilization. 🦸‍♂️
@@ -50,8 +42,6 @@ Need backup? We’re an army. Just airdrop it our way. 😎
 
 Got a wild idea? Want to theme your notifications like a lava lamp?
 Open a PR, drop an issue, or start a weird, wonderful conversation. 🙃
-
----
 
 ## 👀 Screenshots / Demos
 
