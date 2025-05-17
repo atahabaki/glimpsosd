@@ -34,51 +34,66 @@ impl GlimpsOSD {
             .build()
     }
 
-    fn connect_activate(&self) {
-        self.app.connect_activate(|app| {
-            GlimpsOSD::on_activate(app);
-        });
-    }
-
-    fn on_activate(app: &gtk::Application) {
-        let provider = CssProvider::new();
-        provider.load_from_path("examples/style.css");
-        gtk::style_context_add_provider_for_display(
-            &gtk::gdk::Display::default().expect("Could not get default display"),
-            &provider,
-            gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
-        );
-        let window = Self::osd_window(app);
-        window.init_layer_shell();
-        window.set_layer(Layer::Overlay);
-        window.set_anchor(Edge::Bottom, true);
-        window.set_margin(Edge::Bottom, 50);
-        window.present();
-
-        let window_weak = window.downgrade();
-        glib::timeout_add_local(Duration::from_millis(500), move || {
-            if let Some(window) = window_weak.upgrade() {
-                window.close();
+    fn run(&self, event: GlimpsOSDEvent) {
+        self.app.connect_activate(move |app| {
+            let provider = CssProvider::new();
+            provider.load_from_path("examples/style.css");
+            gtk::style_context_add_provider_for_display(
+                &gtk::gdk::Display::default().expect("Could not get default display"),
+                &provider,
+                gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+            );
+            let window = Self::osd_window(app);
+            match &event {
+                GlimpsOSDEvent::Power(new_power_profile) => {
+                    window.set_child(Some(&Self::osd_power_profile(
+                        new_power_profile.to_string(),
+                    )));
+                }
             }
-            glib::ControlFlow::Break
-        });
-    }
+            window.init_layer_shell();
+            window.set_layer(Layer::Overlay);
+            window.set_anchor(Edge::Bottom, true);
+            window.set_margin(Edge::Bottom, 50);
+            window.present();
 
-    fn run(&self) {
-        self.connect_activate();
+            let window_weak = window.downgrade();
+            glib::timeout_add_local(Duration::from_millis(500), move || {
+                if let Some(window) = window_weak.upgrade() {
+                    window.close();
+                }
+                glib::ControlFlow::Break
+            });
+        });
         self.app.run();
     }
 }
 
+#[derive(Debug)]
+enum GlimpsOSDEvent {
+    Power(String),
+}
+
 #[tokio::main]
-async fn main() -> zbus::Result<()> {
-    let connection = Connection::system().await?;
-    let proxy = PowerProfilesProxy::new(&connection).await?;
-    let mut changes = proxy.receive_active_profile_changed().await;
-    while let Some(changed) = changes.next().await {
-        if let Ok(new_profile) = changed.get().await {
-            GlimpsOSD::new().run();
+async fn main() {
+    let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+    let tx_power = tx.clone();
+
+    tokio::spawn(async move {
+        let connection = Connection::system().await.unwrap();
+        let proxy = PowerProfilesProxy::new(&connection).await.unwrap();
+        let mut changes = proxy.receive_active_profile_changed().await;
+        while let Some(changed) = changes.next().await {
+            if let Ok(new_profile) = changed.get().await {
+                tx_power
+                    .send(GlimpsOSDEvent::Power(new_profile))
+                    .await
+                    .unwrap();
+            }
         }
+    });
+
+    while let Some(event) = rx.recv().await {
+        GlimpsOSD::new().run(event);
     }
-    Ok(())
 }
