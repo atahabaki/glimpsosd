@@ -592,6 +592,7 @@ dependencies = [
 name = "glimpsosd"
 version = "0.1.0"
 dependencies = [
+ "futures-lite",
  "gtk4",
  "gtk4-layer-shell",
  "tokio",
