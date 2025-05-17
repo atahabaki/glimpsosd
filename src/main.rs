@@ -1,8 +1,14 @@
+use futures_lite::StreamExt;
 use gtk::CssProvider;
 use gtk::glib;
 use gtk::prelude::*;
 use gtkls::{Edge, Layer, LayerShell};
+use models::power_profiles::PowerProfilesProxy;
 use std::time::Duration;
+use zbus::Connection;
+
+pub(crate) mod models;
+pub(crate) mod ui;
 
 const APP_ID: &str = "dev.atahabaki.glimpsosd";
 
@@ -75,7 +81,16 @@ impl GlimpsOSD {
     }
 }
 
-fn main() {
-    let glimpsosd = GlimpsOSD::new();
-    glimpsosd.run();
+#[tokio::main]
+async fn main() -> zbus::Result<()> {
+    let connection = Connection::system().await?;
+    let proxy = PowerProfilesProxy::new(&connection).await?;
+    let mut changes = proxy.receive_active_profile_changed().await;
+    while let Some(changed) = changes.next().await {
+        if let Ok(new_profile) = changed.get().await {
+            let glimpsosd = GlimpsOSD::new();
+            glimpsosd.run();
+        }
+    }
+    Ok(())
 }
