@@ -34,15 +34,6 @@ impl GlimpsOSD {
             .build()
     }
 
-    fn osd_volume_progressbar() -> gtk::ProgressBar {
-        gtk::ProgressBar::builder()
-            .css_classes(vec!["volume", "max"])
-            .text("  @DEFAULT_SINK@: .75")
-            .show_text(true)
-            .fraction(0.75)
-            .build()
-    }
-
     fn connect_activate(&self) {
         self.app.connect_activate(|app| {
             GlimpsOSD::on_activate(app);
@@ -57,9 +48,7 @@ impl GlimpsOSD {
             &provider,
             gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
         );
-        let child = Self::osd_volume_progressbar();
         let window = Self::osd_window(app);
-        window.set_child(Some(&child));
         window.init_layer_shell();
         window.set_layer(Layer::Overlay);
         window.set_anchor(Edge::Bottom, true);
@@ -88,8 +77,7 @@ async fn main() -> zbus::Result<()> {
     let mut changes = proxy.receive_active_profile_changed().await;
     while let Some(changed) = changes.next().await {
         if let Ok(new_profile) = changed.get().await {
-            let glimpsosd = GlimpsOSD::new();
-            glimpsosd.run();
+            GlimpsOSD::new().run();
         }
     }
     Ok(())
