@@ -5,7 +5,7 @@ use zbus::{Result, proxy};
     default_service = "org.freedesktop.UPower.PowerProfiles",
     default_path = "/org/freedesktop/UPower/PowerProfiles"
 )]
-trait PowerProfiles {
+pub(crate) trait PowerProfiles {
     #[zbus(property)]
     fn active_profile(&self) -> Result<String>;
 }
