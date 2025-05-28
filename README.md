@@ -30,7 +30,7 @@ Why should DE folks have all the cozy little niceties?
 For now, clone and build:
 
 ```bash
-git clone https://github.com/yourusername/glimpsosd.git
+git clone https://github.com/atahabaki/glimpsosd
 cd glimpsosd
 cargo build --release
 ```
