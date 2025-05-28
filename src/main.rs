@@ -3,11 +3,11 @@ use gtk::CssProvider;
 use gtk::glib;
 use gtk::prelude::*;
 use gtkls::{Edge, Layer, LayerShell};
-use models::power_profiles::PowerProfilesProxy;
+use model::power_profiles::PowerProfilesProxy;
 use std::time::Duration;
 use zbus::Connection;
 
-pub(crate) mod models;
+pub(crate) mod model;
 pub(crate) mod ui;
 
 const APP_ID: &str = "dev.atahabaki.glimpsosd";

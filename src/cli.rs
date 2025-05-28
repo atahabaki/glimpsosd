@@ -1,8 +1,8 @@
 use clap::{Args, Parser, Subcommand};
-use models::power_profiles::PowerProfilesProxy;
+use model::power_profiles::PowerProfilesProxy;
 use zbus::Connection;
 
-pub(crate) mod models;
+pub(crate) mod model;
 
 #[derive(Parser)]
 #[command(about, version)]
