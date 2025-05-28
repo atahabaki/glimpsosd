@@ -5,7 +5,7 @@ edition = "2024"
 
 [[bin]]
 name = "glimpsosd"
-path = "src/main.rs"
+path = "src/osd.rs"
 
 [[bin]]
 name = "glimpsosdctl"
