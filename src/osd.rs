@@ -1,9 +1,12 @@
+use clap::Parser;
+use clap::command;
 use futures_lite::StreamExt;
 use gtk::CssProvider;
 use gtk::glib;
 use gtk::prelude::*;
 use gtkls::{Edge, Layer, LayerShell};
 use model::power_profiles::PowerProfilesProxy;
+use std::path::PathBuf;
 use std::time::Duration;
 use zbus::Connection;
 
@@ -74,8 +77,22 @@ enum GlimpsOSDEvent {
     Power(String),
 }
 
+#[derive(Parser)]
+#[command(about, version)]
+struct Cli {
+    /// Use this style.css file instead.
+    /// By default, glimpsosd uses XDG_CONFIG_HOME/glimpsosd/style.css
+    #[arg(short, long)]
+    style: Option<PathBuf>,
+    /// Use this config.ron file instead.
+    /// By default, glimpsosd uses XDG_CONFIG_HOME/glimpsosd/config.ron
+    #[arg(short, long)]
+    config: Option<PathBuf>,
+}
+
 #[tokio::main]
 async fn main() {
+    let args = Cli::parse();
     let (tx, mut rx) = tokio::sync::mpsc::channel(32);
     let tx_power = tx.clone();
 
