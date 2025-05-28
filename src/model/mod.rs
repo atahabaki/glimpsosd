@@ -1,1 +1,2 @@
+pub(crate) mod keyboard_backlight;
 pub(crate) mod power_profiles;
