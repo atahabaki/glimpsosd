@@ -79,8 +79,6 @@ async fn main() {
                         // no need, if glimpsosd is running then
                         // daemon listens for changes in power-profile
                         // removed todo!("write unix socket")
-                        // So just println!
-                        println!("Done");
                     } else {
                         let profile = proxy.active_profile().await.unwrap();
                         println!("{}", profile);
