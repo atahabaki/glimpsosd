@@ -25,6 +25,6 @@ async fn main() {
     });
 
     while let Some(event) = rx.recv().await {
-        GlimpsOSD::from_cli(Cli::parse()).run(event);
+        GlimpsOSD::new().run(Cli::parse(), event);
     }
 }

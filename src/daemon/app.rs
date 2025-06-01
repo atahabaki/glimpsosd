@@ -11,8 +11,6 @@ use gtkls::{Edge, Layer, LayerShell};
 use super::{APP_ID, OSD_CSS};
 
 pub(crate) struct GlimpsOSD {
-    pub _style: String,
-    pub _config: Configuration,
     pub _app: Application,
 }
 
@@ -23,21 +21,14 @@ impl Default for GlimpsOSD {
     fn default() -> Self {
         GlimpsOSD {
             _app: gtk::Application::builder().application_id(APP_ID).build(),
-            _style: OSD_CSS.to_owned(),
-            _config: Configuration::default(),
         }
     }
 }
 
 impl GlimpsOSD {
-    pub(crate) fn from_cli(cli: Cli) -> Self {
-        let _style = Cli::_get_style_from_cli(&cli);
-        let _config = Cli::_get_config_from_cli(&cli);
-
+    pub(crate) fn new() -> Self {
         GlimpsOSD {
             _app: gtk::Application::builder().application_id(APP_ID).build(),
-            _style,
-            _config,
         }
     }
     fn osd_window(app: &gtk::Application) -> gtk::ApplicationWindow {
@@ -51,8 +42,10 @@ impl GlimpsOSD {
             .build()
     }
 
-    pub(crate) fn run(&self, event: Event) {
+    pub(crate) fn run(&self, cli: Cli, event: Event) {
         self._app.connect_activate(move |app| {
+            let _style = Cli::_get_style_from_cli(&cli);
+            let _config = Cli::_get_config_from_cli(&cli);
             let provider = CssProvider::new();
             provider.load_from_path("examples/style.css");
             gtk::style_context_add_provider_for_display(
@@ -62,7 +55,13 @@ impl GlimpsOSD {
             );
             let window = Self::osd_window(app);
             let child = match &event {
-                Event::Power { new_profile } => ui::osd_power_profile(new_profile.to_owned()),
+                Event::Power { new_profile } => ui::osd_power_profile(
+                    new_profile.clone(),
+                    _config
+                        .osdtext
+                        .power_profile_text
+                        ._get_based_on_new_profile_text(new_profile),
+                ),
                 Event::Brightness { device, percent } => todo!("We need brightness widget"),
             };
             window.set_child(Some(&child));
