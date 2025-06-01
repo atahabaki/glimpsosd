@@ -1,14 +1,14 @@
 use std::time::Duration;
 
 use crate::ui;
-use crate::{Cli, Event, model::config::Configuration};
+use crate::{Cli, Event};
 use gtk::Application;
 use gtk::CssProvider;
 use gtk::glib;
 use gtk::prelude::*;
 use gtkls::{Edge, Layer, LayerShell};
 
-use super::{APP_ID, OSD_CSS};
+use super::APP_ID;
 
 pub(crate) struct GlimpsOSD {
     pub _app: Application,
@@ -90,6 +90,7 @@ impl GlimpsOSD {
                 glib::ControlFlow::Break
             });
         });
-        self._app.run();
+        let args: Vec<String> = vec![];
+        self._app.run_with_args(&args);
     }
 }
