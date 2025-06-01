@@ -133,7 +133,7 @@ impl Cli {
         }
     }
     pub(crate) fn _get_config_from_cli(cli: &Cli) -> Configuration {
-        match Cli::_traverse_without_fear(cli.style.clone(), cli.no_fallback, "config.ron") {
+        match Cli::_traverse_without_fear(cli.config.clone(), cli.no_fallback, "config.ron") {
             _Parameter::FromFile(contents) => match ron::from_str::<Configuration>(&contents) {
                 Ok(config) => config,
                 Err(e) if cli.no_fallback => panic!("Failed to parse config file, reason: {e}"),
