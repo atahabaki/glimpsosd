@@ -1,10 +1,10 @@
-use crate::model::config::Configuration;
+use crate::{Cli, model::config::Configuration};
 
 use super::OSD_CSS;
 
 pub(crate) struct GlimpsOSD {
-    pub style: String,
-    pub config: Configuration,
+    pub _style: String,
+    pub _config: Configuration,
 }
 
 /// This is the fallback in case anything with the cli args
@@ -13,8 +13,16 @@ pub(crate) struct GlimpsOSD {
 impl Default for GlimpsOSD {
     fn default() -> Self {
         GlimpsOSD {
-            style: OSD_CSS.to_owned(),
-            config: Configuration::default(),
+            _style: OSD_CSS.to_owned(),
+            _config: Configuration::default(),
         }
+    }
+}
+
+impl GlimpsOSD {
+    pub(crate) fn from_cli(cli: Cli) -> Self {
+        let _style = Cli::_get_style_from_cli(&cli);
+        let _config = Cli::_get_config_from_cli(&cli);
+        GlimpsOSD { _style, _config }
     }
 }

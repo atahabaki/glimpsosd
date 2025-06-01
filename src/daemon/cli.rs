@@ -2,7 +2,7 @@ use std::{error::Error, fs::File, io::Read, path::PathBuf};
 
 use clap::{Parser, command};
 
-use crate::{GlimpsOSD, daemon::OSD_CSS, model::config::Configuration};
+use crate::{daemon::OSD_CSS, model::config::Configuration};
 
 #[derive(Parser)]
 #[command(about, version)]
@@ -22,13 +22,12 @@ pub(crate) struct Cli {
     pub no_fallback: bool,
 }
 
-/// Temporary Config Holder
-enum _ConfigCup {
+enum _Parameter {
     FromFile(String),
     Default,
 }
 
-impl GlimpsOSD {
+impl Cli {
     fn _read_file_contents(path: PathBuf) -> Result<String, Box<dyn Error>> {
         let mut buf = String::new();
         // file get it? XD
@@ -60,49 +59,53 @@ impl GlimpsOSD {
             Err(_) => use_builtin,
         }
     }
-    fn _get_style_from_cli(cli: &Cli) -> String {
-        match &cli.style {
-            Some(path) => match GlimpsOSD::_read_file_contents(path.clone()) {
-                Ok(contents) => contents,
-                Err(e) if cli.no_fallback => panic!(
+    fn _traverse_without_fear(
+        path: Option<PathBuf>,
+        no_fallback: bool,
+        filename: &str,
+    ) -> _Parameter {
+        match path {
+            Some(path) => match Cli::_read_file_contents(path.clone()) {
+                Ok(contents) => _Parameter::FromFile(contents),
+                Err(e) if no_fallback => panic!(
                     "Couldn't read file located at {:?} cause: {}",
                     path.clone(),
                     e
                 ),
                 Err(e) => {
                     eprintln!("Couldn't read file located at {:?} cause: {}", path, e);
-                    match GlimpsOSD::_find_xdg_config_home() {
+                    match Cli::_find_xdg_config_home() {
                         Ok(path) => match path {
                             Some(path) => {
-                                let path = path.join("style.css");
+                                let path = path.join(filename);
                                 match path.exists() {
-                                    true => match GlimpsOSD::_read_file_contents(path.clone()) {
-                                        Ok(contents) => contents,
+                                    true => match Cli::_read_file_contents(path.clone()) {
+                                        Ok(contents) => _Parameter::FromFile(contents),
                                         Err(e) => {
                                             eprintln!(
                                                 "Couldn't read file located at {:?} cause: {}",
                                                 path, e
                                             );
-                                            OSD_CSS.to_owned()
+                                            _Parameter::Default
                                         }
                                     },
-                                    false => OSD_CSS.to_owned(),
+                                    false => _Parameter::Default,
                                 }
                             }
-                            None => OSD_CSS.to_owned(),
+                            None => _Parameter::Default,
                         },
-                        Err(_) => OSD_CSS.to_owned(),
+                        Err(_) => _Parameter::Default,
                     }
                 }
             },
-            None => match GlimpsOSD::_find_xdg_config_home() {
+            None => match Cli::_find_xdg_config_home() {
                 Ok(path) => match path {
                     Some(path) => {
-                        let path = path.join("style.css");
+                        let path = path.join(filename);
                         match path.exists() {
-                            true => match GlimpsOSD::_read_file_contents(path.clone()) {
-                                Ok(contents) => contents,
-                                Err(e) if cli.no_fallback => {
+                            true => match Cli::_read_file_contents(path.clone()) {
+                                Ok(contents) => _Parameter::FromFile(contents),
+                                Err(e) if no_fallback => {
                                     panic!("Couldn't read file located at {:?} cause: {}", path, e)
                                 }
                                 Err(e) => {
@@ -110,96 +113,36 @@ impl GlimpsOSD {
                                         "Couldn't read file located at {:?} cause: {}",
                                         path, e
                                     );
-                                    OSD_CSS.to_owned()
+                                    _Parameter::Default
                                 }
                             },
-                            false => OSD_CSS.to_owned(),
+                            false => _Parameter::Default,
                         }
                     }
-                    None => OSD_CSS.to_owned(),
+                    None => _Parameter::Default,
                 },
-                Err(e) if cli.no_fallback => panic!("{:?}", e),
-                Err(_) => OSD_CSS.to_owned(),
+                Err(e) if no_fallback => panic!("{:?}", e),
+                Err(_) => _Parameter::Default,
             },
         }
     }
-    fn _get_config_from_cli(cli: &Cli) -> _ConfigCup {
-        match &cli.config {
-            Some(path) => match GlimpsOSD::_read_file_contents(path.clone()) {
-                Ok(contents) => _ConfigCup::FromFile(contents),
-                Err(e) if cli.no_fallback => panic!(
-                    "Couldn't read file located at {:?} cause: {}",
-                    path.clone(),
-                    e
-                ),
-                Err(e) => {
-                    eprintln!("Couldn't read file located at {:?} cause: {}", path, e);
-                    match GlimpsOSD::_find_xdg_config_home() {
-                        Ok(path) => match path {
-                            Some(path) => {
-                                let path = path.join("config.ron");
-                                match path.exists() {
-                                    true => match GlimpsOSD::_read_file_contents(path.clone()) {
-                                        Ok(contents) => _ConfigCup::FromFile(contents),
-                                        Err(e) => {
-                                            eprintln!(
-                                                "Couldn't read file located at {:?} cause: {}",
-                                                path, e
-                                            );
-                                            _ConfigCup::Default
-                                        }
-                                    },
-                                    false => _ConfigCup::Default,
-                                }
-                            }
-                            None => _ConfigCup::Default,
-                        },
-                        Err(_) => _ConfigCup::Default,
-                    }
-                }
-            },
-            None => match GlimpsOSD::_find_xdg_config_home() {
-                Ok(path) => match path {
-                    Some(path) => {
-                        let path = path.join("config.ron");
-                        match path.exists() {
-                            true => match GlimpsOSD::_read_file_contents(path.clone()) {
-                                Ok(contents) => _ConfigCup::FromFile(contents),
-                                Err(e) if cli.no_fallback => {
-                                    panic!("Couldn't read file located at {:?} cause: {}", path, e)
-                                }
-                                Err(e) => {
-                                    eprintln!(
-                                        "Couldn't read file located at {:?} cause: {}",
-                                        path, e
-                                    );
-                                    _ConfigCup::Default
-                                }
-                            },
-                            false => _ConfigCup::Default,
-                        }
-                    }
-                    None => _ConfigCup::Default,
-                },
-                Err(e) if cli.no_fallback => panic!("{:?}", e),
-                Err(_) => _ConfigCup::Default,
-            },
+    pub(crate) fn _get_style_from_cli(cli: &Cli) -> String {
+        match Cli::_traverse_without_fear(cli.style.clone(), cli.no_fallback, "style.css") {
+            _Parameter::FromFile(contents) => contents,
+            _Parameter::Default => OSD_CSS.to_owned(),
         }
     }
-    pub(crate) fn from_cli(cli: Cli) -> Self {
-        let style = GlimpsOSD::_get_style_from_cli(&cli);
-        let config = GlimpsOSD::_get_config_from_cli(&cli);
-        let config = match config {
-            _ConfigCup::FromFile(contents) => match ron::from_str::<Configuration>(&contents) {
+    pub(crate) fn _get_config_from_cli(cli: &Cli) -> Configuration {
+        match Cli::_traverse_without_fear(cli.style.clone(), cli.no_fallback, "config.ron") {
+            _Parameter::FromFile(contents) => match ron::from_str::<Configuration>(&contents) {
                 Ok(config) => config,
-                Err(e) if cli.no_fallback => panic!("Parsing failed by ron: {e}"),
+                Err(e) if cli.no_fallback => panic!("Failed to parse config file, reason: {e}"),
                 Err(e) => {
-                    eprintln!("Parsing failed by ron: {e}");
+                    eprintln!("Failed to parse config file, reason: {e}");
                     Configuration::default()
                 }
             },
-            _ConfigCup::Default => Configuration::default(),
-        };
-        GlimpsOSD { style, config }
+            _Parameter::Default => Configuration::default(),
+        }
     }
 }
