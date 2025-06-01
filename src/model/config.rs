@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -53,8 +51,8 @@ pub(crate) struct PowerProfileText {
 }
 
 impl PowerProfileText {
-    pub(crate) fn _get_based_on_new_profile_text(&self, new_profile: &String) -> String {
-        match new_profile.as_str() {
+    pub(crate) fn _get_based_on_new_profile_text(&self, new_profile: &str) -> String {
+        match new_profile {
             "power-saver" => self.power_saver.clone(),
             "balanced" => self.balanced.clone(),
             "performance" => self.performance.clone(),
