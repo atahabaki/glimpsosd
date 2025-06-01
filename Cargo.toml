@@ -12,7 +12,7 @@ name = "glimpsosdctl"
 path = "src/cli.rs"
 
 [dependencies]
-clap = { version = "4.5.38", features = ["derive"] }
+clap = { version = "4.5.38", features = ["derive", "env"] }
 futures-lite = "2.6.0"
 gtk = { version = "0.9.6", package = "gtk4" }
 gtkls = { version = "0.5.0", package = "gtk4-layer-shell" }
