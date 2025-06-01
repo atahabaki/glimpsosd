@@ -1,0 +1,17 @@
+(
+ duration: 3000,
+ positioning: (
+   anchor: Bottom,
+   top_margin: None,
+   bottom_margin: Some(50),
+   left_margin: None,
+   right_margin: None
+   ),
+ osdtext: (
+   power_profile_text: (
+     power_saver: "\u{f236}  Power-Saver",
+     balanced: "\u{f24e}  Balanced",
+     performance: "\u{f06d} Performance"
+     )
+   )
+)
