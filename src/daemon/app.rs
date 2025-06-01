@@ -72,7 +72,7 @@ impl GlimpsOSD {
             window.present();
 
             let window_weak = window.downgrade();
-            glib::timeout_add_local(Duration::from_millis(500), move || {
+            glib::timeout_add_local(Duration::from_millis(_config.duration), move || {
                 if let Some(window) = window_weak.upgrade() {
                     window.close();
                 }
