@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use crate::ui;
 use crate::{Cli, Event, model::config::Configuration};
 use gtk::Application;
 use gtk::CssProvider;
@@ -61,9 +62,7 @@ impl GlimpsOSD {
             );
             let window = Self::osd_window(app);
             let child = match &event {
-                Event::Power { new_profile } => {
-                    GlimpsOSD::osd_power_profile(new_profile.to_owned())
-                }
+                Event::Power { new_profile } => ui::osd_power_profile(new_profile.to_owned()),
                 Event::Brightness { device, percent } => todo!("We need brightness widget"),
             };
             window.set_child(Some(&child));
