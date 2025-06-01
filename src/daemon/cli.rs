@@ -9,11 +9,11 @@ use crate::{daemon::OSD_CSS, model::config::Configuration};
 pub(crate) struct Cli {
     /// Use this style.css file instead.
     /// By default, glimpsosd uses XDG_CONFIG_HOME/glimpsosd/style.css
-    #[arg(short, long, value_name = "CSS_FILE")]
+    #[arg(short, long, value_name = "CSS_FILE", env = "GLIMPSOSD_STYLE_FILE")]
     pub style: Option<PathBuf>,
     /// Use this config.ron file instead.
     /// By default, glimpsosd uses XDG_CONFIG_HOME/glimpsosd/config.ron
-    #[arg(short, long, value_name = "RON_FILE")]
+    #[arg(short, long, value_name = "RON_FILE", env = "GLIMPSOSD_CONFIG_FILE")]
     pub config: Option<PathBuf>,
     /// Useful for no default styling or configuration
     /// By default when error occured when reading style/config use builtins.
