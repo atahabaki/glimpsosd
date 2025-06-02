@@ -1,21 +1,21 @@
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 use super::event::Event;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub(crate) struct Configuration {
     pub duration: u64,
     pub positioning: Positioning,
     pub osdtext: OsdText,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub(crate) struct Positioning {
     pub anchor: Anchor,
     pub margin: Option<i32>,
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 pub(crate) enum Anchor {
     Top,
     #[default]
@@ -35,13 +35,13 @@ impl From<Anchor> for gtkls::Edge {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub(crate) struct OsdText {
     pub power_profile_text: PowerProfileText,
     pub battery_text: BatteryText,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub(crate) struct PowerProfileText {
     pub power_saver: String,
     pub balanced: String,
@@ -69,7 +69,7 @@ impl Default for PowerProfileText {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub(crate) struct BatteryText {
     pub present_charged_text: String,
     pub present_empty_text: String,
@@ -79,7 +79,7 @@ pub(crate) struct BatteryText {
     pub removed_state: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub(crate) struct BatteryOtherStateText {
     pub unknown: String,
     pub pending_charge: String,
