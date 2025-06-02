@@ -6,7 +6,9 @@ pub(crate) enum Event {
         new_profile: String,
     },
     PowerDevice {
+        is_present: bool,
         state: u32,
+        percentage: f64,
     },
     Brightness {
         device: BacklightDevice,

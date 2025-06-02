@@ -63,7 +63,11 @@ impl GlimpsOSD {
                         .power_profile_text
                         ._get_based_on_new_profile_text(new_profile),
                 ),
-                Event::PowerDevice { state } => todo!(),
+                Event::PowerDevice {
+                    is_present,
+                    state,
+                    percentage,
+                } => todo!(),
                 Event::Brightness { device, percent } => todo!("We need brightness widget"),
             };
             window.set_child(Some(&child));

@@ -25,8 +25,13 @@ impl tocss::ToCSSClasses for Event {
                     _ => vec.push("unknown".to_owned()),
                 }
             }
-            Event::PowerDevice { state } => {
+            Event::PowerDevice {
+                is_present,
+                state,
+                percentage,
+            } => {
                 vec.push("power_device".into());
+                vec.push(if *is_present { "present" } else { "removed" }.into());
                 vec.push(
                     match state {
                         1 => "charging",
@@ -35,6 +40,22 @@ impl tocss::ToCSSClasses for Event {
                         4 => "fully-charged",
                         5 => "pending-charge",
                         6 => "pending-discharge",
+                        _ => "unknown",
+                    }
+                    .into(),
+                );
+                vec.push(
+                    match percentage {
+                        0_f64..10_f64 => "one",
+                        10_f64..20_f64 => "two",
+                        20_f64..30_f64 => "three",
+                        30_f64..40_f64 => "four",
+                        40_f64..50_f64 => "five",
+                        50_f64..60_f64 => "six",
+                        60_f64..70_f64 => "seven",
+                        70_f64..80_f64 => "eight",
+                        80_f64..90_f64 => "nine",
+                        90_f64..100_f64 => "ten",
                         _ => "unknown",
                     }
                     .into(),
@@ -74,20 +95,47 @@ async fn main() {
         }
     });
 
-    let tx_power_device = tx.clone();
-    tokio::spawn(async move {
-        let connection = Connection::system().await.unwrap();
-        let proxy = PowerDeviceProxy::new(&connection).await.unwrap();
-        let mut changes = proxy.receive_state_changed().await;
-        while let Some(changed) = changes.next().await {
-            if let Ok(state) = changed.get().await {
-                tx_power_device
-                    .send(Event::PowerDevice { state })
-                    .await
-                    .unwrap();
+    let connection = Connection::system().await.unwrap();
+    let proxy = PowerDeviceProxy::new(&connection).await.unwrap();
+    let device_type = proxy.type_().await.unwrap();
+    let power_supply = proxy.power_supply().await.unwrap();
+    // According to
+    // https://upower.freedesktop.org/docs/Device.html
+    // device should met these conditions to be a Battery
+    let is_battery = power_supply && device_type == 2;
+    if is_battery {
+        let tx_power_state = tx.clone();
+        tokio::spawn(async move {
+            let mut changes = proxy.receive_state_changed().await;
+            while let Some(changed) = changes.next().await {
+                if let Ok(state) = changed.get().await {
+                    println!("{}", state);
+                }
             }
-        }
-    });
+        });
+        let tx_power_is_present = tx.clone();
+        tokio::spawn(async move {
+            let connection = Connection::system().await.unwrap();
+            let proxy = PowerDeviceProxy::new(&connection).await.unwrap();
+            let mut changes = proxy.receive_is_present_changed().await;
+            while let Some(changed) = changes.next().await {
+                if let Ok(is_present) = changed.get().await {
+                    println!("{}", is_present);
+                }
+            }
+        });
+        let tx_power_percentage = tx.clone();
+        tokio::spawn(async move {
+            let connection = Connection::system().await.unwrap();
+            let proxy = PowerDeviceProxy::new(&connection).await.unwrap();
+            let mut changes = proxy.receive_percentage_changed().await;
+            while let Some(changed) = changes.next().await {
+                if let Ok(percent) = changed.get().await {
+                    println!("{}", percent);
+                }
+            }
+        });
+    }
 
     while let Some(event) = rx.recv().await {
         GlimpsOSD::new().run(Cli::parse(), event);
