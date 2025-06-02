@@ -67,7 +67,13 @@ impl GlimpsOSD {
                     is_present,
                     state,
                     percentage,
-                } => todo!(),
+                } => ui::osd_battery(
+                    event.to_css_classes(),
+                    _config
+                        .osdtext
+                        .battery_text
+                        ._get_based_on_new_battery_status(&event),
+                ),
                 Event::Brightness { device, percent } => todo!("We need brightness widget"),
             };
             window.set_child(Some(&child));
