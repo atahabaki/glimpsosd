@@ -44,14 +44,14 @@ glimpsosd.background {
     border-radius: 20px;
 }
 
-glimpsosd label.power,
+glimpsosd label.power_profile,
 glimpsosd progressbar.volume text {
     font-family: 'CaskaydiaCove Nerd Font';
     font-size: 16px;
     font-weight: bold;
 }
 
-glimpsosd label.power {
+glimpsosd label.power_profile {
     margin: 20px;
 }
 
@@ -62,17 +62,17 @@ glimpsosd progressbar.volume.max.mute text {
     color: var(--red);
 }
 
-glimpsosd label.power.power-saver,
+glimpsosd label.power_profile.power_profile-saver,
 glimpsosd progressbar.volume.min text {
     color: var(--yellow);
 }
 
-glimpsosd label.power.balanced,
+glimpsosd label.power_profile.balanced,
 glimpsosd progressbar.volume.med text {
     color: var(--peach);
 }
 
-glimpsosd label.power.performance,
+glimpsosd label.power_profile.performance,
 glimpsosd progressbar.volume.max text {
     color: var(--green);
 }
