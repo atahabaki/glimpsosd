@@ -1,5 +1,5 @@
 use clap::{Args, Parser, Subcommand};
-use model::power_profiles::PowerProfilesProxy;
+use model::{keyboard_backlight::KeyboardBacklightProxy, power_profiles::PowerProfilesProxy};
 use zbus::Connection;
 
 pub(crate) mod model;
@@ -78,9 +78,27 @@ async fn main() {
                 },
             }
         }
-        Commands::Brightness(brightness) => match brightness {
-            BrightnessDevice::Display(brightness_command) => todo!(),
-            BrightnessDevice::Keyboard(brightness_command) => todo!(),
-        },
+        Commands::Brightness(brightness) => {
+            let connection = Connection::system().await.unwrap();
+            let proxy = KeyboardBacklightProxy::new(&connection).await.unwrap();
+            match brightness {
+                BrightnessDevice::Display(brightness_command) => todo!(),
+                BrightnessDevice::Keyboard(brightness_command) => match brightness_command {
+                    BrightnessCommand::Current { set } => match set {
+                        Some(brightness) => {
+                            proxy.set_brightness(brightness).await.unwrap();
+                            todo!(
+                                "Write to unix socket Event::KeyboardBrightness({})",
+                                brightness
+                            );
+                        }
+                        None => println!("{}", proxy.get_brightness().await.unwrap()),
+                    },
+                    BrightnessCommand::Max => {
+                        println!("{}", proxy.get_max_brightness().await.unwrap())
+                    }
+                },
+            }
+        }
     }
 }
