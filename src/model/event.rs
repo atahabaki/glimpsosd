@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub(crate) enum Event {
-    Power {
+    PowerProfile {
         new_profile: String,
     },
     Brightness {

@@ -19,7 +19,10 @@ async fn main() {
         let mut changes = proxy.receive_active_profile_changed().await;
         while let Some(changed) = changes.next().await {
             if let Ok(new_profile) = changed.get().await {
-                tx_power.send(Event::Power { new_profile }).await.unwrap();
+                tx_power
+                    .send(Event::PowerProfile { new_profile })
+                    .await
+                    .unwrap();
             }
         }
     });

@@ -55,7 +55,7 @@ impl GlimpsOSD {
             );
             let window = Self::osd_window(app);
             let child = match &event {
-                Event::Power { new_profile } => ui::osd_power_profile(
+                Event::PowerProfile { new_profile } => ui::osd_power_profile(
                     new_profile.clone(),
                     _config
                         .osdtext
