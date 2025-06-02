@@ -10,10 +10,7 @@ pub(crate) struct Configuration {
 #[derive(Debug, Serialize, Deserialize)]
 pub(crate) struct Positioning {
     pub anchor: Anchor,
-    pub top_margin: Option<Margin>,
-    pub bottom_margin: Option<Margin>,
-    pub left_margin: Option<Margin>,
-    pub right_margin: Option<Margin>,
+    pub margin: Option<i32>,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
@@ -24,8 +21,6 @@ pub(crate) enum Anchor {
     Left,
     Right,
 }
-
-pub(crate) type Margin = i32;
 
 impl From<Anchor> for gtkls::Edge {
     fn from(value: Anchor) -> Self {
@@ -77,10 +72,7 @@ impl Default for Configuration {
             duration: 500,
             positioning: Positioning {
                 anchor: Anchor::default(),
-                top_margin: None,
-                bottom_margin: Some(50),
-                left_margin: None,
-                right_margin: None,
+                margin: Some(50),
             },
             osdtext: OsdText {
                 power_profile_text: PowerProfileText::default(),

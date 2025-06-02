@@ -67,18 +67,10 @@ impl GlimpsOSD {
             window.set_child(Some(&child));
             window.init_layer_shell();
             window.set_layer(Layer::Overlay);
-            window.set_anchor(Edge::from(_config.positioning.anchor), true);
-            if let Some(left_margin) = _config.positioning.left_margin {
-                window.set_margin(Edge::Left, left_margin);
-            }
-            if let Some(top_margin) = _config.positioning.top_margin {
-                window.set_margin(Edge::Top, top_margin);
-            }
-            if let Some(right_margin) = _config.positioning.right_margin {
-                window.set_margin(Edge::Right, right_margin);
-            }
-            if let Some(bottom_margin) = _config.positioning.bottom_margin {
-                window.set_margin(Edge::Bottom, bottom_margin);
+            let edge = Edge::from(_config.positioning.anchor);
+            window.set_anchor(Edge::from(edge), true);
+            if let Some(left_margin) = _config.positioning.margin {
+                window.set_margin(edge, left_margin);
             }
             window.present();
 
