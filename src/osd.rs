@@ -109,7 +109,16 @@ async fn main() {
             let mut changes = proxy.receive_state_changed().await;
             while let Some(changed) = changes.next().await {
                 if let Ok(state) = changed.get().await {
-                    println!("{}", state);
+                    let is_present = proxy.is_present().await.unwrap();
+                    let percentage = proxy.percentage().await.unwrap();
+                    tx_power_state
+                        .send(Event::Battery {
+                            is_present,
+                            state,
+                            percentage,
+                        })
+                        .await
+                        .unwrap();
                 }
             }
         });
@@ -120,7 +129,16 @@ async fn main() {
             let mut changes = proxy.receive_is_present_changed().await;
             while let Some(changed) = changes.next().await {
                 if let Ok(is_present) = changed.get().await {
-                    println!("{}", is_present);
+                    let state = proxy.state().await.unwrap();
+                    let percentage = proxy.percentage().await.unwrap();
+                    tx_power_is_present
+                        .send(Event::Battery {
+                            is_present,
+                            state,
+                            percentage,
+                        })
+                        .await
+                        .unwrap();
                 }
             }
         });
@@ -130,8 +148,17 @@ async fn main() {
             let proxy = PowerDeviceProxy::new(&connection).await.unwrap();
             let mut changes = proxy.receive_percentage_changed().await;
             while let Some(changed) = changes.next().await {
-                if let Ok(percent) = changed.get().await {
-                    println!("{}", percent);
+                if let Ok(percentage) = changed.get().await {
+                    let is_present = proxy.is_present().await.unwrap();
+                    let state = proxy.state().await.unwrap();
+                    tx_power_percentage
+                        .send(Event::Battery {
+                            is_present,
+                            state,
+                            percentage,
+                        })
+                        .await
+                        .unwrap();
                 }
             }
         });
