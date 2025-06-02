@@ -63,7 +63,7 @@ impl GlimpsOSD {
                         .power_profile_text
                         ._get_based_on_new_profile_text(new_profile),
                 ),
-                Event::PowerDevice {
+                Event::Battery {
                     is_present,
                     state,
                     percentage,

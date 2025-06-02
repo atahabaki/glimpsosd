@@ -25,7 +25,7 @@ impl tocss::ToCSSClasses for Event {
                     _ => vec.push("unknown".to_owned()),
                 }
             }
-            Event::PowerDevice {
+            Event::Battery {
                 is_present,
                 state,
                 percentage,

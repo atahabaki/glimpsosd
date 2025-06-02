@@ -5,7 +5,7 @@ pub(crate) enum Event {
     PowerProfile {
         new_profile: String,
     },
-    PowerDevice {
+    Battery {
         is_present: bool,
         state: u32,
         percentage: f64,
