@@ -3,7 +3,7 @@ use zbus::proxy;
 
 #[proxy(
     interface = "org.freedesktop.UPower.KbdBacklight",
-    default_service = "org.freedesktop.UPower.KbdBacklight",
+    default_service = "org.freedesktop.UPower",
     default_path = "/org/freedesktop/UPower/KbdBacklight"
 )]
 pub(crate) trait KeyboardBacklight {
