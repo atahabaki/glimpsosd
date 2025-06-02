@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use crate::tocss::ToCSSClasses;
 use crate::ui;
 use crate::{Cli, Event};
 use gtk::Application;
@@ -56,7 +57,7 @@ impl GlimpsOSD {
             let window = Self::osd_window(app);
             let child = match &event {
                 Event::PowerProfile { new_profile } => ui::osd_power_profile(
-                    new_profile.clone(),
+                    event.to_css_classes(),
                     _config
                         .osdtext
                         .power_profile_text

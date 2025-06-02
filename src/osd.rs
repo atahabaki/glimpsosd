@@ -8,6 +8,53 @@ pub(crate) mod daemon;
 pub(crate) mod model;
 pub(crate) mod ui;
 
+mod tocss {
+    pub(crate) trait ToCSSClasses {
+        fn to_css_classes(&self) -> Vec<String>;
+    }
+}
+
+impl tocss::ToCSSClasses for Event {
+    fn to_css_classes(&self) -> Vec<String> {
+        let mut vec = Vec::<String>::new();
+        match self {
+            Event::PowerProfile { new_profile } => {
+                vec.push("power_profile".into());
+                match new_profile.as_str() {
+                    "power-saver" | "balanced" | "performance" => vec.push(new_profile.clone()),
+                    _ => vec.push("unknown".to_owned()),
+                }
+            }
+            Event::PowerDevice { state } => {
+                vec.push("power_device".into());
+                vec.push(
+                    match state {
+                        1 => "charging",
+                        2 => "discharging",
+                        3 => "empty",
+                        4 => "fully-charged",
+                        5 => "pending-charge",
+                        6 => "pending-discharge",
+                        _ => "unknown",
+                    }
+                    .into(),
+                );
+            }
+            Event::Brightness { device, percent } => {
+                vec.push("brightness".into());
+                vec.push(
+                    match device {
+                        model::event::BacklightDevice::Keyboard => "keyboard",
+                        model::event::BacklightDevice::Display => "display",
+                    }
+                    .into(),
+                );
+            }
+        }
+        vec
+    }
+}
+
 #[tokio::main]
 async fn main() {
     let (tx, mut rx) = tokio::sync::mpsc::channel(32);
