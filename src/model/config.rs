@@ -142,132 +142,37 @@ impl BatteryText {
                 percentage,
             } => match is_present {
                 true => match state {
-                    1 => match percentage {
-                        0_f64..10_f64 => self
-                            .present_charging_state_text
-                            .0
-                            .get(0)
-                            .unwrap()
-                            .to_owned(),
-                        10_f64..20_f64 => self
-                            .present_charging_state_text
-                            .0
-                            .get(1)
-                            .unwrap()
-                            .to_owned(),
-                        20_f64..30_f64 => self
-                            .present_charging_state_text
-                            .0
-                            .get(2)
-                            .unwrap()
-                            .to_owned(),
-                        30_f64..40_f64 => self
-                            .present_charging_state_text
-                            .0
-                            .get(3)
-                            .unwrap()
-                            .to_owned(),
-                        40_f64..50_f64 => self
-                            .present_charging_state_text
-                            .0
-                            .get(4)
-                            .unwrap()
-                            .to_owned(),
-                        50_f64..60_f64 => self
-                            .present_charging_state_text
-                            .0
-                            .get(5)
-                            .unwrap()
-                            .to_owned(),
-                        60_f64..70_f64 => self
-                            .present_charging_state_text
-                            .0
-                            .get(6)
-                            .unwrap()
-                            .to_owned(),
-                        70_f64..80_f64 => self
-                            .present_charging_state_text
-                            .0
-                            .get(7)
-                            .unwrap()
-                            .to_owned(),
-                        80_f64..90_f64 => self
-                            .present_charging_state_text
-                            .0
-                            .get(8)
-                            .unwrap()
-                            .to_owned(),
-                        90_f64..100_f64 => self
-                            .present_charging_state_text
-                            .0
-                            .get(9)
-                            .unwrap()
-                            .to_owned(),
-                        _ => self.present_charging_state_text.1.to_owned(),
-                    },
-                    2 => match percentage {
-                        0_f64..10_f64 => self
-                            .present_discharging_state_text
-                            .0
-                            .get(0)
-                            .unwrap()
-                            .to_owned(),
-                        10_f64..20_f64 => self
-                            .present_discharging_state_text
-                            .0
-                            .get(1)
-                            .unwrap()
-                            .to_owned(),
-                        20_f64..30_f64 => self
-                            .present_discharging_state_text
-                            .0
-                            .get(2)
-                            .unwrap()
-                            .to_owned(),
-                        30_f64..40_f64 => self
-                            .present_discharging_state_text
-                            .0
-                            .get(3)
-                            .unwrap()
-                            .to_owned(),
-                        40_f64..50_f64 => self
-                            .present_discharging_state_text
-                            .0
-                            .get(4)
-                            .unwrap()
-                            .to_owned(),
-                        50_f64..60_f64 => self
-                            .present_discharging_state_text
-                            .0
-                            .get(5)
-                            .unwrap()
-                            .to_owned(),
-                        60_f64..70_f64 => self
-                            .present_discharging_state_text
-                            .0
-                            .get(6)
-                            .unwrap()
-                            .to_owned(),
-                        70_f64..80_f64 => self
-                            .present_discharging_state_text
-                            .0
-                            .get(7)
-                            .unwrap()
-                            .to_owned(),
-                        80_f64..90_f64 => self
-                            .present_discharging_state_text
-                            .0
-                            .get(8)
-                            .unwrap()
-                            .to_owned(),
-                        90_f64..100_f64 => self
-                            .present_discharging_state_text
-                            .0
-                            .get(9)
-                            .unwrap()
-                            .to_owned(),
-                        _ => self.present_discharging_state_text.1.to_owned(),
-                    },
+                    1 | 2 => {
+                        let number = match percentage {
+                            0_f64..10_f64 => Some(0),
+                            10_f64..20_f64 => Some(1),
+                            20_f64..30_f64 => Some(2),
+                            30_f64..40_f64 => Some(3),
+                            40_f64..50_f64 => Some(4),
+                            50_f64..60_f64 => Some(5),
+                            60_f64..70_f64 => Some(6),
+                            70_f64..80_f64 => Some(7),
+                            80_f64..90_f64 => Some(8),
+                            90_f64..100_f64 => Some(9),
+                            _ => None,
+                        };
+                        match number {
+                            Some(number) if state == &1 => self
+                                .present_charging_state_text
+                                .0
+                                .get(number)
+                                .unwrap()
+                                .to_owned(),
+                            Some(number) => self
+                                .present_discharging_state_text
+                                .0
+                                .get(number)
+                                .unwrap()
+                                .to_owned(),
+                            None if state == &1 => self.present_charging_state_text.1.to_owned(),
+                            None => self.present_discharging_state_text.1.to_owned(),
+                        }
+                    }
                     3 => self.present_empty_text.to_owned(),
                     4 => self.present_charged_text.to_owned(),
                     5 => self.present_other_state_text.pending_charge.to_owned(),
