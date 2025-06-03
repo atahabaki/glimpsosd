@@ -55,28 +55,33 @@ impl GlimpsOSD {
                 gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
             );
             let window = Self::osd_window(app);
-            let child = match &event {
-                Event::PowerProfile { new_profile } => ui::osd_power_profile(
-                    event.to_css_classes(),
-                    _config
-                        .osdtext
-                        .power_profile_text
-                        ._get_based_on_new_profile_text(new_profile),
-                ),
+            match &event {
+                Event::PowerProfile { new_profile } => {
+                    window.set_child(Some(&ui::osd_power_profile(
+                        event.to_css_classes(),
+                        _config
+                            .osdtext
+                            .power_profile_text
+                            ._get_based_on_new_profile_text(new_profile),
+                    )))
+                }
                 Event::Battery {
-                    is_present,
-                    state,
+                    is_present: _,
+                    state: _,
                     percentage,
-                } => ui::osd_battery(
+                } => window.set_child(Some(&ui::osd_battery(
                     event.to_css_classes(),
                     _config
                         .osdtext
                         .battery_text
                         ._get_based_on_new_battery_status(&event),
-                ),
-                Event::Brightness { device, percent } => todo!("We need brightness widget"),
-            };
-            window.set_child(Some(&child));
+                    *percentage / 100_f64,
+                ))),
+                Event::Brightness {
+                    device: _,
+                    percent: _,
+                } => todo!("We need brightness widget"),
+            }
             window.init_layer_shell();
             window.set_layer(Layer::Overlay);
             let edge = Edge::from(_config.positioning.anchor);
