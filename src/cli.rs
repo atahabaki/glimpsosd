@@ -24,6 +24,10 @@ enum Commands {
 enum PowerProfileCommand {
     /// List available power profiles
     List,
+    /// Set to previous power profile
+    Previous,
+    /// Set to next power profile
+    Next,
     /// Set or get power profile
     Active {
         /// Set power profile
@@ -70,6 +74,38 @@ async fn main() {
                         if let Some(profile_name) = profile.get("Profile") {
                             println!("{}", profile_name);
                         }
+                    }
+                }
+                PowerProfileCommand::Previous | PowerProfileCommand::Next => {
+                    let is_first = matches!(power_profile_command, PowerProfileCommand::Next);
+                    let profiles = proxy.profiles().await.unwrap();
+                    let current_profile = proxy.active_profile().await.unwrap();
+
+                    let next_profile = profiles
+                        .iter()
+                        .map(|p| p.get("Profile"))
+                        .collect::<Option<Vec<_>>>()
+                        .and_then(|names| {
+                            names
+                                .iter()
+                                .position(|&name| name == &current_profile)
+                                .and_then(|i| {
+                                    names
+                                        .get(if is_first { i + 1 } else { i - 1 })
+                                        .cloned()
+                                        .or_else(|| {
+                                            if is_first {
+                                                names.first()
+                                            } else {
+                                                names.last()
+                                            }
+                                            .cloned()
+                                        })
+                                })
+                        });
+
+                    if let Some(profile) = next_profile {
+                        proxy.set_active_profile(profile.to_string()).await.unwrap();
                     }
                 }
                 PowerProfileCommand::Active { profile } => match profile {
