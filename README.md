@@ -40,15 +40,15 @@ cargo build --release
 Running Hyprland? Here’s a no-nonsense snippet to get you glimpsing in style:
 
 ```hypr
+### Autostart
 exec-once = glimpsosd
 
 ### Bindings
-bindle = , XF86KbdBrightnessUp, exec, glimpsosdctl --brightness keyboard increase
-bindle = , XF86KbdBrightnessDown, exec, glimpsosdctl --brightness keyboard decrease
-bindle = , XF86MonBrightnessUp, exec, glimpsosdctl --brightness keyboard increase
-bindle = , XF86MonBrightnessDown, exec, glimpsosdctl --brightness keyboard decrease
-
-### Power profile key (often found on gaming laptops)
+bindle = , XF86KbdBrightnessUp, exec, glimpsosdctl brightness keyboard increase
+bindle = , XF86KbdBrightnessDown, exec, glimpsosdctl brightness keyboard decrease
+bindle = , XF86MonBrightnessUp, exec, glimpsosdctl brightness keyboard increase
+bindle = , XF86MonBrightnessDown, exec, glimpsosdctl brightness keyboard decrease
+# Power profile key (often found on gaming laptops)
 bindl = , XF86Launch4, exec, glimpsosdctl power-profile next
 ```
 
