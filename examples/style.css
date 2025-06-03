@@ -45,7 +45,8 @@ glimpsosd.background {
 }
 
 glimpsosd label.power_profile,
-glimpsosd progressbar.volume text {
+glimpsosd progressbar.volume text,
+glimpsosd progressbar.battery text {
     font-family: 'CaskaydiaCove Nerd Font';
     font-size: 16px;
     font-weight: bold;
@@ -55,68 +56,89 @@ glimpsosd label.power_profile {
     margin: 20px;
 }
 
-glimpsosd progressbar.volume.mute text,
-glimpsosd progressbar.volume.min.mute text,
-glimpsosd progressbar.volume.med.mute text,
-glimpsosd progressbar.volume.max.mute text {
-    color: var(--red);
-}
-
-glimpsosd label.power_profile.power_profile-saver,
-glimpsosd progressbar.volume.min text {
-    color: var(--yellow);
-}
-
-glimpsosd label.power_profile.balanced,
-glimpsosd progressbar.volume.med text {
-    color: var(--peach);
-}
-
-glimpsosd label.power_profile.performance,
-glimpsosd progressbar.volume.max text {
-    color: var(--green);
-}
-
-glimpsosd progressbar.volume {
+glimpsosd progressbar {
     color: var(--text);
     margin: 20px;
 }
 
-glimpsosd progressbar.volume text {
+glimpsosd progressbar text {
     margin: 0 0 20px;
     color: var(--text);
 }
 
-glimpsosd progressbar.volume trough {
+glimpsosd progressbar trough {
     background-color: var(--base);
     border: none;
 }
 
-glimpsosd progressbar.volume trough progress {
+glimpsosd progressbar trough progress {
     background-color: var(--text);
 }
 
-glimpsosd progressbar.volume trough,
-glimpsosd progressbar.volume trough progress {
+glimpsosd progressbar trough,
+glimpsosd progressbar trough progress {
     border-radius: 10px;
     padding: 5px 0;
+}
+
+
+glimpsosd progressbar.volume.mute text,
+glimpsosd progressbar.volume.min.mute text,
+glimpsosd progressbar.volume.med.mute text,
+glimpsosd progressbar.volume.max.mute text,
+glimpsosd .one text,
+glimpsosd .two text,
+glimpsosd .three text {
+    color: var(--red);
+}
+
+glimpsosd label.power_profile.power_profile-saver,
+glimpsosd progressbar.volume.min text,
+glimpsosd .four text,
+glimpsosd .five text {
+    color: var(--yellow);
+}
+
+glimpsosd label.power_profile.balanced,
+glimpsosd progressbar.volume.med text,
+glimpsosd .six text,
+glimpsosd .seven text {
+    color: var(--peach);
+}
+
+glimpsosd label.power_profile.performance,
+glimpsosd progressbar.volume.max text,
+glimpsosd .eight text,
+glimpsosd .nine text,
+glimpsosd .ten text {
+    color: var(--green);
 }
 
 glimpsosd progressbar.volume.mute trough progress,
 glimpsosd progressbar.volume.min.mute trough progress,
 glimpsosd progressbar.volume.med.mute trough progress,
-glimpsosd progressbar.volume.max.mute trough progress {
+glimpsosd progressbar.volume.max.mute trough progress,
+glimpsosd .one trough progress,
+glimpsosd .two trough progress,
+glimpsosd .three trough progress {
     background-color: var(--red);
 }
 
-glimpsosd progressbar.volume.min trough progress {
+glimpsosd progressbar.volume.min trough progress,
+glimpsosd .four trough progress,
+glimpsosd .five trough progress {
     background-color: var(--yellow);
 }
 
-glimpsosd progressbar.volume.med trough progress {
+glimpsosd progressbar.volume.med trough progress,
+glimpsosd .six trough progress,
+glimpsosd .seven trough progress {
     background-color: var(--peach);
 }
 
-glimpsosd progressbar.volume.max trough progress {
+glimpsosd progressbar.volume.max trough progress,
+glimpsosd .eight trough progress,
+glimpsosd .nine trough progress,
+glimpsosd .ten trough progress {
     background-color: var(--green);
 }
