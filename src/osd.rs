@@ -30,7 +30,7 @@ impl tocss::ToCSSClasses for Event {
                 state,
                 percentage,
             } => {
-                vec.push("power_device".into());
+                vec.push("battery".into());
                 vec.push(if *is_present { "present" } else { "removed" }.into());
                 vec.push(
                     match state {
@@ -61,7 +61,7 @@ impl tocss::ToCSSClasses for Event {
                     .into(),
                 );
             }
-            Event::Brightness { device, percent } => {
+            Event::Brightness { device, percent: _ } => {
                 vec.push("brightness".into());
                 vec.push(
                     match device {
