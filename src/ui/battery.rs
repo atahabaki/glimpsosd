@@ -1,6 +1,12 @@
-pub(crate) fn osd_battery(css_classes: Vec<String>, display_text: String) -> gtk::Label {
-    gtk::Label::builder()
+pub(crate) fn osd_battery(
+    css_classes: Vec<String>,
+    display_text: String,
+    fraction: f64,
+) -> gtk::ProgressBar {
+    gtk::ProgressBar::builder()
         .css_classes(css_classes)
-        .label(display_text)
+        .text(display_text)
+        .show_text(true)
+        .fraction(fraction)
         .build()
 }
