@@ -48,7 +48,7 @@ impl GlimpsOSD {
             let _style = Cli::_get_style_from_cli(&cli);
             let _config = Cli::_get_config_from_cli(&cli);
             let provider = CssProvider::new();
-            provider.load_from_path("examples/style.css");
+            provider.load_from_data(_style.as_str());
             gtk::style_context_add_provider_for_display(
                 &gtk::gdk::Display::default().expect("Could not get default display"),
                 &provider,
