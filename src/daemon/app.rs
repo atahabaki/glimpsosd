@@ -60,8 +60,8 @@ impl GlimpsOSD {
                     window.set_child(Some(&ui::osd_power_profile(
                         event.to_css_classes(),
                         _config
-                            .osdtext
-                            .power_profile_text
+                            ._osdtext
+                            ._power_profile_text
                             ._get_based_on_new_profile_text(new_profile),
                     )))
                 }
@@ -72,8 +72,8 @@ impl GlimpsOSD {
                 } => window.set_child(Some(&ui::osd_battery(
                     event.to_css_classes(),
                     _config
-                        .osdtext
-                        .battery_text
+                        ._osdtext
+                        ._battery_text
                         ._get_based_on_new_battery_status(&event),
                     *percentage / 100_f64,
                 ))),
@@ -84,15 +84,15 @@ impl GlimpsOSD {
             }
             window.init_layer_shell();
             window.set_layer(Layer::Overlay);
-            let edge = Edge::from(_config.positioning.anchor);
-            window.set_anchor(Edge::from(edge), true);
-            if let Some(left_margin) = _config.positioning.margin {
+            let edge = Edge::from(_config._positioning._anchor);
+            window.set_anchor(edge, true);
+            if let Some(left_margin) = _config._positioning._margin {
                 window.set_margin(edge, left_margin);
             }
             window.present();
 
             let window_weak = window.downgrade();
-            glib::timeout_add_local(Duration::from_millis(_config.duration), move || {
+            glib::timeout_add_local(Duration::from_millis(_config._duration), move || {
                 if let Some(window) = window_weak.upgrade() {
                     window.close();
                 }

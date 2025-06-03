@@ -4,15 +4,15 @@ use super::event::Event;
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct Configuration {
-    pub duration: u64,
-    pub positioning: Positioning,
-    pub osdtext: OsdText,
+    pub _duration: u64,
+    pub _positioning: Positioning,
+    pub _osdtext: OsdText,
 }
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct Positioning {
-    pub anchor: Anchor,
-    pub margin: Option<i32>,
+    pub _anchor: Anchor,
+    pub _margin: Option<i32>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -37,23 +37,23 @@ impl From<Anchor> for gtkls::Edge {
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct OsdText {
-    pub power_profile_text: PowerProfileText,
-    pub battery_text: BatteryText,
+    pub _power_profile_text: PowerProfileText,
+    pub _battery_text: BatteryText,
 }
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct PowerProfileText {
-    pub power_saver: String,
-    pub balanced: String,
-    pub performance: String,
+    pub _power_saver: String,
+    pub _balanced: String,
+    pub _performance: String,
 }
 
 impl PowerProfileText {
     pub(crate) fn _get_based_on_new_profile_text(&self, new_profile: &str) -> String {
         match new_profile {
-            "power-saver" => self.power_saver.clone(),
-            "balanced" => self.balanced.clone(),
-            "performance" => self.performance.clone(),
+            "power-saver" => self._power_saver.clone(),
+            "balanced" => self._balanced.clone(),
+            "performance" => self._performance.clone(),
             _ => "".into(),
         }
     }
@@ -62,23 +62,23 @@ impl PowerProfileText {
 impl Default for PowerProfileText {
     fn default() -> Self {
         PowerProfileText {
-            power_saver: "  Power-Saver".to_owned(),
-            balanced: "  Balanced".to_owned(),
-            performance: " Performance".to_owned(),
+            _power_saver: "  Power-Saver".to_owned(),
+            _balanced: "  Balanced".to_owned(),
+            _performance: " Performance".to_owned(),
         }
     }
 }
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct BatteryText {
-    pub present_charged_text: String,
-    pub present_empty_text: String,
-    pub present_charging_state_text: ([String; 10], String),
-    pub present_discharging_state_text: ([String; 10], String),
-    pub present_pending_charge_state_text: ([String; 10], String),
-    pub present_pending_discharge_state_text: ([String; 10], String),
-    pub removed_state_text: String,
-    pub unknown_state_text: String,
+    pub _present_charged_text: String,
+    pub _present_empty_text: String,
+    pub _present_charging_state_text: ([String; 10], String),
+    pub _present_discharging_state_text: ([String; 10], String),
+    pub _present_pending_charge_state_text: ([String; 10], String),
+    pub _present_pending_discharge_state_text: ([String; 10], String),
+    pub _removed_state_text: String,
+    pub _unknown_state_text: String,
 }
 
 impl Default for BatteryText {
@@ -132,20 +132,20 @@ impl Default for BatteryText {
             "󰂅  Charging".to_string(),
         ];
         BatteryText {
-            present_charged_text: "󰁹".to_owned(),
-            present_empty_text: "󰁺".to_owned(),
-            present_charging_state_text: (charging_icons, "󰂑 Charging".to_owned()),
-            present_discharging_state_text: (discharging_icons, "󰂑 Discharging".to_owned()),
-            present_pending_charge_state_text: (
+            _present_charged_text: "󰁹".to_owned(),
+            _present_empty_text: "󰁺".to_owned(),
+            _present_charging_state_text: (charging_icons, "󰂑 Charging".to_owned()),
+            _present_discharging_state_text: (discharging_icons, "󰂑 Discharging".to_owned()),
+            _present_pending_charge_state_text: (
                 pending_charge_icons,
                 "󰂑 Pending Charge".to_owned(),
             ),
-            present_pending_discharge_state_text: (
+            _present_pending_discharge_state_text: (
                 pending_discharge_icons,
                 "󰂑 Pending Discharge".to_owned(),
             ),
-            removed_state_text: "󱟨".to_owned(),
-            unknown_state_text: "󰂑".to_owned(),
+            _removed_state_text: "󱟨".to_owned(),
+            _unknown_state_text: "󰂑".to_owned(),
         }
     }
 }
@@ -175,42 +175,44 @@ impl BatteryText {
                         };
                         match number {
                             Some(number) if state == &1 => self
-                                .present_charging_state_text
+                                ._present_charging_state_text
                                 .0
                                 .get(number)
                                 .unwrap()
                                 .to_owned(),
                             Some(number) if state == &2 => self
-                                .present_discharging_state_text
+                                ._present_discharging_state_text
                                 .0
                                 .get(number)
                                 .unwrap()
                                 .to_owned(),
                             Some(number) if state == &5 => self
-                                .present_pending_charge_state_text
+                                ._present_pending_charge_state_text
                                 .0
                                 .get(number)
                                 .unwrap()
                                 .to_owned(),
                             Some(number) => self
-                                .present_pending_discharge_state_text
+                                ._present_pending_discharge_state_text
                                 .0
                                 .get(number)
                                 .unwrap()
                                 .to_owned(),
-                            None if state == &1 => self.present_charging_state_text.1.to_owned(),
-                            None if state == &2 => self.present_discharging_state_text.1.to_owned(),
-                            None if state == &5 => {
-                                self.present_pending_charge_state_text.1.to_owned()
+                            None if state == &1 => self._present_charging_state_text.1.to_owned(),
+                            None if state == &2 => {
+                                self._present_discharging_state_text.1.to_owned()
                             }
-                            None => self.present_pending_discharge_state_text.1.to_owned(),
+                            None if state == &5 => {
+                                self._present_pending_charge_state_text.1.to_owned()
+                            }
+                            None => self._present_pending_discharge_state_text.1.to_owned(),
                         }
                     }
-                    3 => self.present_empty_text.to_owned(),
-                    4 => self.present_charged_text.to_owned(),
-                    _ => self.unknown_state_text.to_owned(),
+                    3 => self._present_empty_text.to_owned(),
+                    4 => self._present_charged_text.to_owned(),
+                    _ => self._unknown_state_text.to_owned(),
                 },
-                false => self.removed_state_text.to_owned(),
+                false => self._removed_state_text.to_owned(),
             },
             _ => unreachable!("Only call on event Battery"),
         }
@@ -220,14 +222,14 @@ impl BatteryText {
 impl Default for Configuration {
     fn default() -> Self {
         Self {
-            duration: 500,
-            positioning: Positioning {
-                anchor: Anchor::default(),
-                margin: Some(50),
+            _duration: 500,
+            _positioning: Positioning {
+                _anchor: Anchor::default(),
+                _margin: Some(50),
             },
-            osdtext: OsdText {
-                power_profile_text: PowerProfileText::default(),
-                battery_text: BatteryText::default(),
+            _osdtext: OsdText {
+                _power_profile_text: PowerProfileText::default(),
+                _battery_text: BatteryText::default(),
             },
         }
     }

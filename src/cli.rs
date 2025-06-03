@@ -1,4 +1,4 @@
-use clap::{Args, Parser, Subcommand};
+use clap::{Parser, Subcommand};
 use model::{keyboard_backlight::KeyboardBacklightProxy, power_profiles::PowerProfilesProxy};
 use zbus::Connection;
 
@@ -82,7 +82,7 @@ async fn main() {
             let connection = Connection::system().await.unwrap();
             let proxy = KeyboardBacklightProxy::new(&connection).await.unwrap();
             match brightness {
-                BrightnessDevice::Display(brightness_command) => todo!(),
+                BrightnessDevice::Display(_brightness_command) => todo!(),
                 BrightnessDevice::Keyboard(brightness_command) => match brightness_command {
                     BrightnessCommand::Current { set } => match set {
                         Some(brightness) => {
