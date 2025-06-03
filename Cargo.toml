@@ -11,6 +11,12 @@ path = "src/osd.rs"
 name = "glimpsosdctl"
 path = "src/cli.rs"
 
+[profile.release]
+strip = true
+opt-level = "s"
+lto = true
+codegen-units = 1
+
 [dependencies]
 clap = { version = "4.5.38", features = ["derive", "env"] }
 futures-lite = "2.6.0"
