@@ -75,25 +75,10 @@ pub(crate) struct BatteryText {
     pub present_empty_text: String,
     pub present_charging_state_text: ([String; 10], String),
     pub present_discharging_state_text: ([String; 10], String),
-    pub present_other_state_text: BatteryOtherStateText,
-    pub removed_state: String,
-}
-
-#[derive(Debug, Deserialize)]
-pub(crate) struct BatteryOtherStateText {
-    pub unknown: String,
-    pub pending_charge: String,
-    pub pending_discharge: String,
-}
-
-impl Default for BatteryOtherStateText {
-    fn default() -> Self {
-        BatteryOtherStateText {
-            unknown: "Unknown".to_owned(),
-            pending_charge: "Pending Charge".to_owned(),
-            pending_discharge: "Pending Discharge".to_owned(),
-        }
-    }
+    pub present_pending_charge_state_text: ([String; 10], String),
+    pub present_pending_discharge_state_text: ([String; 10], String),
+    pub removed_state_text: String,
+    pub unknown_state_text: String,
 }
 
 impl Default for BatteryText {
@@ -109,6 +94,30 @@ impl Default for BatteryText {
             "󰂁 Discharging".to_string(),
             "󰂂 Discharging".to_string(),
             "󰁹 Discharging".to_string(),
+        ];
+        let pending_charge_icons = [
+            "󰁺 Pending Charge".to_string(),
+            "󰁻 Pending Charge".to_string(),
+            "󰁼 Pending Charge".to_string(),
+            "󰁽 Pending Charge".to_string(),
+            "󰁾 Pending Charge".to_string(),
+            "󰁿 Pending Charge".to_string(),
+            "󰂀 Pending Charge".to_string(),
+            "󰂁 Pending Charge".to_string(),
+            "󰂂 Pending Charge".to_string(),
+            "󰁹 Pending Charge".to_string(),
+        ];
+        let pending_discharge_icons = [
+            "󰁺 Pending Discharge".to_string(),
+            "󰁻 Pending Discharge".to_string(),
+            "󰁼 Pending Discharge".to_string(),
+            "󰁽 Pending Discharge".to_string(),
+            "󰁾 Pending Discharge".to_string(),
+            "󰁿 Pending Discharge".to_string(),
+            "󰂀 Pending Discharge".to_string(),
+            "󰂁 Pending Discharge".to_string(),
+            "󰂂 Pending Discharge".to_string(),
+            "󰁹 Pending Discharge".to_string(),
         ];
         let charging_icons = [
             "󰢜  Charging".to_string(),
@@ -127,8 +136,16 @@ impl Default for BatteryText {
             present_empty_text: "󰁺".to_owned(),
             present_charging_state_text: (charging_icons, "󰂑 Charging".to_owned()),
             present_discharging_state_text: (discharging_icons, "󰂑 Discharging".to_owned()),
-            present_other_state_text: BatteryOtherStateText::default(),
-            removed_state: "󱟨".to_owned(),
+            present_pending_charge_state_text: (
+                pending_charge_icons,
+                "󰂑 Pending Charge".to_owned(),
+            ),
+            present_pending_discharge_state_text: (
+                pending_discharge_icons,
+                "󰂑 Pending Discharge".to_owned(),
+            ),
+            removed_state_text: "󱟨".to_owned(),
+            unknown_state_text: "󰂑".to_owned(),
         }
     }
 }
@@ -142,7 +159,7 @@ impl BatteryText {
                 percentage,
             } => match is_present {
                 true => match state {
-                    1 | 2 => {
+                    1 | 2 | 5 | 6 => {
                         let number = match percentage {
                             0_f64..10_f64 => Some(0),
                             10_f64..20_f64 => Some(1),
@@ -163,23 +180,37 @@ impl BatteryText {
                                 .get(number)
                                 .unwrap()
                                 .to_owned(),
-                            Some(number) => self
+                            Some(number) if state == &2 => self
                                 .present_discharging_state_text
                                 .0
                                 .get(number)
                                 .unwrap()
                                 .to_owned(),
+                            Some(number) if state == &5 => self
+                                .present_pending_charge_state_text
+                                .0
+                                .get(number)
+                                .unwrap()
+                                .to_owned(),
+                            Some(number) => self
+                                .present_pending_discharge_state_text
+                                .0
+                                .get(number)
+                                .unwrap()
+                                .to_owned(),
                             None if state == &1 => self.present_charging_state_text.1.to_owned(),
-                            None => self.present_discharging_state_text.1.to_owned(),
+                            None if state == &2 => self.present_discharging_state_text.1.to_owned(),
+                            None if state == &5 => {
+                                self.present_pending_charge_state_text.1.to_owned()
+                            }
+                            None => self.present_pending_discharge_state_text.1.to_owned(),
                         }
                     }
                     3 => self.present_empty_text.to_owned(),
                     4 => self.present_charged_text.to_owned(),
-                    5 => self.present_other_state_text.pending_charge.to_owned(),
-                    6 => self.present_other_state_text.pending_discharge.to_owned(),
-                    _ => self.present_other_state_text.unknown.to_owned(),
+                    _ => self.unknown_state_text.to_owned(),
                 },
-                false => self.removed_state.to_owned(),
+                false => self.removed_state_text.to_owned(),
             },
             _ => unreachable!("Only call on event Battery"),
         }
