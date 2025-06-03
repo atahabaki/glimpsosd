@@ -35,6 +35,25 @@ cd glimpsosd
 cargo build --release
 ```
 
+## 🌀 Hyprland Integration
+
+Running Hyprland? Here’s a no-nonsense snippet to get you glimpsing in style:
+
+```hypr
+exec-once = glimpsosd
+
+### Bindings
+bindle = , XF86KbdBrightnessUp, exec, glimpsosdctl --brightness keyboard increase
+bindle = , XF86KbdBrightnessDown, exec, glimpsosdctl --brightness keyboard decrease
+bindle = , XF86MonBrightnessUp, exec, glimpsosdctl --brightness keyboard increase
+bindle = , XF86MonBrightnessDown, exec, glimpsosdctl --brightness keyboard decrease
+
+### Power profile key (often found on gaming laptops)
+bindl = , XF86Launch4, exec, glimpsosdctl power-profile next
+```
+
+Stick that in your ~/.config/hypr/hyprland.conf, and you're golden.
+
 ## 💖 Contribute, Chill, Repeat
 
 Spotted a bug? Be a hero — squash it for the good of modern civilization. 🦸‍♂️
