@@ -3,16 +3,18 @@ use serde::Deserialize;
 use super::event::Event;
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub(crate) struct Configuration {
-    pub _duration: u64,
-    pub _positioning: Positioning,
-    pub _osdtext: OsdText,
+    pub duration: u64,
+    pub positioning: Positioning,
+    pub osd: OsdText,
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub(crate) struct Positioning {
-    pub _anchor: Anchor,
-    pub _margin: Option<i32>,
+    pub anchor: Anchor,
+    pub margin: Option<i32>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -27,34 +29,37 @@ pub(crate) enum Anchor {
 impl From<Anchor> for gtkls::Edge {
     fn from(value: Anchor) -> Self {
         match value {
-            Anchor::Top => gtkls::Edge::Top,
-            Anchor::Bottom => gtkls::Edge::Bottom,
-            Anchor::Left => gtkls::Edge::Left,
-            Anchor::Right => gtkls::Edge::Right,
+            Anchor::Top => Self::Top,
+            Anchor::Bottom => Self::Bottom,
+            Anchor::Left => Self::Left,
+            Anchor::Right => Self::Right,
         }
     }
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub(crate) struct OsdText {
-    pub _power_profile_text: PowerProfileText,
-    pub _battery_text: BatteryText,
+    pub power_profile: PowerProfileText,
+    pub battery: BatteryText,
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub(crate) struct PowerProfileText {
-    pub _power_saver: String,
-    pub _balanced: String,
-    pub _performance: String,
+    pub power_saver: String,
+    pub balanced: String,
+    pub performance: String,
 }
 
 impl PowerProfileText {
-    pub(crate) fn _get_based_on_new_profile_text(&self, new_profile: &str) -> String {
+    #[allow(dead_code)]
+    pub(crate) fn get_based_on_new_profile(&self, new_profile: &str) -> String {
         match new_profile {
-            "power-saver" => self._power_saver.clone(),
-            "balanced" => self._balanced.clone(),
-            "performance" => self._performance.clone(),
-            _ => "".into(),
+            "power-saver" => self.power_saver.clone(),
+            "balanced" => self.balanced.clone(),
+            "performance" => self.performance.clone(),
+            _ => String::new(),
         }
     }
 }
@@ -62,23 +67,24 @@ impl PowerProfileText {
 impl Default for PowerProfileText {
     fn default() -> Self {
         PowerProfileText {
-            _power_saver: "  Power-Saver".to_owned(),
-            _balanced: "  Balanced".to_owned(),
-            _performance: " Performance".to_owned(),
+            power_saver: "  Power-Saver".to_owned(),
+            balanced: "  Balanced".to_owned(),
+            performance: " Performance".to_owned(),
         }
     }
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub(crate) struct BatteryText {
-    pub _present_charged_text: String,
-    pub _present_empty_text: String,
-    pub _present_charging_state_text: ([String; 10], String),
-    pub _present_discharging_state_text: ([String; 10], String),
-    pub _present_pending_charge_state_text: ([String; 10], String),
-    pub _present_pending_discharge_state_text: ([String; 10], String),
-    pub _removed_state_text: String,
-    pub _unknown_state_text: String,
+    pub present_charged: String,
+    pub present_empty: String,
+    pub present_charging: ([String; 10], String),
+    pub present_discharging: ([String; 10], String),
+    pub present_pending_charge: ([String; 10], String),
+    pub present_pending_discharge: ([String; 10], String),
+    pub removed: String,
+    pub unknown: String,
 }
 
 impl Default for BatteryText {
@@ -132,26 +138,21 @@ impl Default for BatteryText {
             "󰂅  Charging".to_string(),
         ];
         BatteryText {
-            _present_charged_text: "󰁹".to_owned(),
-            _present_empty_text: "󰁺".to_owned(),
-            _present_charging_state_text: (charging_icons, "󰂑 Charging".to_owned()),
-            _present_discharging_state_text: (discharging_icons, "󰂑 Discharging".to_owned()),
-            _present_pending_charge_state_text: (
-                pending_charge_icons,
-                "󰂑 Pending Charge".to_owned(),
-            ),
-            _present_pending_discharge_state_text: (
-                pending_discharge_icons,
-                "󰂑 Pending Discharge".to_owned(),
-            ),
-            _removed_state_text: "󱟨".to_owned(),
-            _unknown_state_text: "󰂑".to_owned(),
+            present_charged: "󰁹".to_owned(),
+            present_empty: "󰁺".to_owned(),
+            present_charging: (charging_icons, "󰂑 Charging".to_owned()),
+            present_discharging: (discharging_icons, "󰂑 Discharging".to_owned()),
+            present_pending_charge: (pending_charge_icons, "󰂑 Pending Charge".to_owned()),
+            present_pending_discharge: (pending_discharge_icons, "󰂑 Pending Discharge".to_owned()),
+            removed: "󱟨".to_owned(),
+            unknown: "󰂑".to_owned(),
         }
     }
 }
 
 impl BatteryText {
-    pub(crate) fn _get_based_on_new_battery_status(&self, event: &Event) -> String {
+    #[allow(dead_code)]
+    pub(crate) fn get_based_on_new_battery_status(&self, event: &Event) -> String {
         match event {
             Event::Battery {
                 is_present,
@@ -174,45 +175,35 @@ impl BatteryText {
                             _ => None,
                         };
                         match number {
-                            Some(number) if state == &1 => self
-                                ._present_charging_state_text
-                                .0
-                                .get(number)
-                                .unwrap()
-                                .to_owned(),
-                            Some(number) if state == &2 => self
-                                ._present_discharging_state_text
-                                .0
-                                .get(number)
-                                .unwrap()
-                                .to_owned(),
+                            Some(number) if state == &1 => {
+                                self.present_charging.0.get(number).unwrap().to_owned()
+                            }
+                            Some(number) if state == &2 => {
+                                self.present_discharging.0.get(number).unwrap().to_owned()
+                            }
                             Some(number) if state == &5 => self
-                                ._present_pending_charge_state_text
+                                .present_pending_charge
                                 .0
                                 .get(number)
                                 .unwrap()
                                 .to_owned(),
                             Some(number) => self
-                                ._present_pending_discharge_state_text
+                                .present_pending_discharge
                                 .0
                                 .get(number)
                                 .unwrap()
                                 .to_owned(),
-                            None if state == &1 => self._present_charging_state_text.1.to_owned(),
-                            None if state == &2 => {
-                                self._present_discharging_state_text.1.to_owned()
-                            }
-                            None if state == &5 => {
-                                self._present_pending_charge_state_text.1.to_owned()
-                            }
-                            None => self._present_pending_discharge_state_text.1.to_owned(),
+                            None if state == &1 => self.present_charging.1.clone(),
+                            None if state == &2 => self.present_discharging.1.clone(),
+                            None if state == &5 => self.present_pending_charge.1.clone(),
+                            None => self.present_pending_discharge.1.clone(),
                         }
                     }
-                    3 => self._present_empty_text.to_owned(),
-                    4 => self._present_charged_text.to_owned(),
-                    _ => self._unknown_state_text.to_owned(),
+                    3 => self.present_empty.clone(),
+                    4 => self.present_charged.clone(),
+                    _ => self.unknown.clone(),
                 },
-                false => self._removed_state_text.to_owned(),
+                false => self.removed.clone(),
             },
             _ => unreachable!("Only call on event Battery"),
         }
@@ -222,14 +213,14 @@ impl BatteryText {
 impl Default for Configuration {
     fn default() -> Self {
         Self {
-            _duration: 500,
-            _positioning: Positioning {
-                _anchor: Anchor::default(),
-                _margin: Some(50),
+            duration: 500,
+            positioning: Positioning {
+                anchor: Anchor::default(),
+                margin: Some(50),
             },
-            _osdtext: OsdText {
-                _power_profile_text: PowerProfileText::default(),
-                _battery_text: BatteryText::default(),
+            osd: OsdText {
+                power_profile: PowerProfileText::default(),
+                battery: BatteryText::default(),
             },
         }
     }

@@ -8,11 +8,11 @@ use crate::{daemon::OSD_CSS, model::config::Configuration};
 #[command(about, version)]
 pub(crate) struct Cli {
     /// Use this style.css file instead.
-    /// By default, glimpsosd uses XDG_CONFIG_HOME/glimpsosd/style.css
+    /// By default, glimpsosd uses `XDG_CONFIG_HOME/glimpsosd/style.css`
     #[arg(short, long, value_name = "CSS_FILE", env = "GLIMPSOSD_STYLE_FILE")]
     pub style: Option<PathBuf>,
     /// Use this config.ron file instead.
-    /// By default, glimpsosd uses XDG_CONFIG_HOME/glimpsosd/config.ron
+    /// By default, glimpsosd uses `XDG_CONFIG_HOME/glimpsosd/config.ron`
     #[arg(short, long, value_name = "RON_FILE", env = "GLIMPSOSD_CONFIG_FILE")]
     pub config: Option<PathBuf>,
     /// Useful for no default styling or configuration
@@ -49,9 +49,10 @@ impl Cli {
                 Ok(home_path) => {
                     let xdg_config_home_path =
                         PathBuf::from(home_path).join(".config").join("glimpsosd");
-                    match xdg_config_home_path.exists() {
-                        true => Ok(Some(xdg_config_home_path)),
-                        false => use_builtin,
+                    if xdg_config_home_path.exists() {
+                        Ok(Some(xdg_config_home_path))
+                    } else {
+                        use_builtin
                     }
                 }
                 Err(_) => use_builtin,
@@ -64,76 +65,65 @@ impl Cli {
         no_fallback: bool,
         filename: &str,
     ) -> _Parameter {
-        match path {
-            Some(path) => match Cli::_read_file_contents(path.clone()) {
-                Ok(contents) => _Parameter::FromFile(contents),
-                Err(e) if no_fallback => panic!(
-                    "Couldn't read file located at {:?} cause: {}",
-                    path.clone(),
-                    e
-                ),
-                Err(e) => {
-                    eprintln!("Couldn't read file located at {:?} cause: {}", path, e);
-                    match Cli::_find_xdg_config_home() {
-                        Ok(path) => match path {
-                            Some(path) => {
-                                let path = path.join(filename);
-                                match path.exists() {
-                                    true => match Cli::_read_file_contents(path.clone()) {
-                                        Ok(contents) => _Parameter::FromFile(contents),
-                                        Err(e) => {
-                                            eprintln!(
-                                                "Couldn't read file located at {:?} cause: {}",
-                                                path, e
-                                            );
-                                            _Parameter::Default
-                                        }
-                                    },
-                                    false => _Parameter::Default,
-                                }
+        path.map_or_else(
+            || match Self::_find_xdg_config_home() {
+                Ok(path) => path.map_or(_Parameter::Default, |path| {
+                    let path = path.join(filename);
+                    if path.exists() {
+                        match Self::_read_file_contents(path.clone()) {
+                            Ok(contents) => _Parameter::FromFile(contents),
+                            Err(e) if no_fallback => {
+                                panic!("Couldn't read file located at {path:?} cause: {e}")
                             }
-                            None => _Parameter::Default,
-                        },
-                        Err(_) => _Parameter::Default,
-                    }
-                }
-            },
-            None => match Cli::_find_xdg_config_home() {
-                Ok(path) => match path {
-                    Some(path) => {
-                        let path = path.join(filename);
-                        match path.exists() {
-                            true => match Cli::_read_file_contents(path.clone()) {
-                                Ok(contents) => _Parameter::FromFile(contents),
-                                Err(e) if no_fallback => {
-                                    panic!("Couldn't read file located at {:?} cause: {}", path, e)
-                                }
-                                Err(e) => {
-                                    eprintln!(
-                                        "Couldn't read file located at {:?} cause: {}",
-                                        path, e
-                                    );
-                                    _Parameter::Default
-                                }
-                            },
-                            false => _Parameter::Default,
+                            Err(e) => {
+                                eprintln!("Couldn't read file located at {path:?} cause: {e}");
+                                _Parameter::Default
+                            }
                         }
+                    } else {
+                        _Parameter::Default
                     }
-                    None => _Parameter::Default,
-                },
-                Err(e) if no_fallback => panic!("{:?}", e),
+                }),
+                Err(e) if no_fallback => panic!("{e:?}"),
                 Err(_) => _Parameter::Default,
             },
-        }
+            |path| match Self::_read_file_contents(path.clone()) {
+                Ok(contents) => _Parameter::FromFile(contents),
+                Err(e) if no_fallback => {
+                    panic!("Couldn't read file located at {path:?} cause: {e}")
+                }
+                Err(e) => {
+                    eprintln!("Couldn't read file located at {path:?} cause: {e}");
+                    Self::_find_xdg_config_home().map_or(_Parameter::Default, |path| {
+                        path.map_or(_Parameter::Default, |path| {
+                            let path = path.join(filename);
+                            if path.exists() {
+                                match Self::_read_file_contents(path.clone()) {
+                                    Ok(contents) => _Parameter::FromFile(contents),
+                                    Err(e) => {
+                                        eprintln!(
+                                            "Couldn't read file located at {path:?} cause: {e}"
+                                        );
+                                        _Parameter::Default
+                                    }
+                                }
+                            } else {
+                                _Parameter::Default
+                            }
+                        })
+                    })
+                }
+            },
+        )
     }
-    pub(crate) fn _get_style_from_cli(cli: &Cli) -> String {
-        match Cli::_traverse_without_fear(cli.style.clone(), cli.no_fallback, "style.css") {
+    pub(crate) fn _get_style_from_cli(cli: &Self) -> String {
+        match Self::_traverse_without_fear(cli.style.clone(), cli.no_fallback, "style.css") {
             _Parameter::FromFile(contents) => contents,
             _Parameter::Default => OSD_CSS.to_owned(),
         }
     }
-    pub(crate) fn _get_config_from_cli(cli: &Cli) -> Configuration {
-        match Cli::_traverse_without_fear(cli.config.clone(), cli.no_fallback, "config.ron") {
+    pub(crate) fn _get_config_from_cli(cli: &Self) -> Configuration {
+        match Self::_traverse_without_fear(cli.config.clone(), cli.no_fallback, "config.ron") {
             _Parameter::FromFile(contents) => match ron::from_str::<Configuration>(&contents) {
                 Ok(config) => config,
                 Err(e) if cli.no_fallback => panic!("Failed to parse config file, reason: {e}"),

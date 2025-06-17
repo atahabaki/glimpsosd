@@ -11,7 +11,7 @@ use gtkls::{Edge, Layer, LayerShell};
 use super::APP_ID;
 
 pub(crate) struct GlimpsOSD {
-    pub _app: Application,
+    pub app: Application,
 }
 
 /// This is the fallback in case anything with the cli args
@@ -20,7 +20,7 @@ pub(crate) struct GlimpsOSD {
 impl Default for GlimpsOSD {
     fn default() -> Self {
         GlimpsOSD {
-            _app: gtk::Application::builder().application_id(APP_ID).build(),
+            app: gtk::Application::builder().application_id(APP_ID).build(),
         }
     }
 }
@@ -28,7 +28,7 @@ impl Default for GlimpsOSD {
 impl GlimpsOSD {
     pub(crate) fn new() -> Self {
         GlimpsOSD {
-            _app: gtk::Application::builder().application_id(APP_ID).build(),
+            app: gtk::Application::builder().application_id(APP_ID).build(),
         }
     }
     fn osd_window(app: &gtk::Application) -> gtk::ApplicationWindow {
@@ -43,11 +43,11 @@ impl GlimpsOSD {
     }
 
     pub(crate) fn run(&self, cli: Cli, event: Event) {
-        self._app.connect_activate(move |app| {
-            let _style = Cli::_get_style_from_cli(&cli);
-            let _config = Cli::_get_config_from_cli(&cli);
+        self.app.connect_activate(move |app| {
+            let style = Cli::_get_style_from_cli(&cli);
+            let config = Cli::_get_config_from_cli(&cli);
             let provider = CssProvider::new();
-            provider.load_from_data(_style.as_str());
+            provider.load_from_data(style.as_str());
             gtk::style_context_add_provider_for_display(
                 &gtk::gdk::Display::default().expect("Could not get default display"),
                 &provider,
@@ -57,23 +57,20 @@ impl GlimpsOSD {
             match &event {
                 Event::PowerProfile { new_profile } => {
                     window.set_child(Some(&ui::osd_power_profile(
-                        event._to_css_classes(),
-                        _config
-                            ._osdtext
-                            ._power_profile_text
-                            ._get_based_on_new_profile_text(new_profile),
-                    )))
+                        event.to_css_classes(),
+                        config
+                            .osd
+                            .power_profile
+                            .get_based_on_new_profile(new_profile),
+                    )));
                 }
                 Event::Battery {
                     is_present: _,
                     state: _,
                     percentage,
                 } => window.set_child(Some(&ui::osd_battery(
-                    event._to_css_classes(),
-                    _config
-                        ._osdtext
-                        ._battery_text
-                        ._get_based_on_new_battery_status(&event),
+                    event.to_css_classes(),
+                    config.osd.battery.get_based_on_new_battery_status(&event),
                     *percentage / 100_f64,
                 ))),
                 Event::Brightness {
@@ -83,15 +80,15 @@ impl GlimpsOSD {
             }
             window.init_layer_shell();
             window.set_layer(Layer::Overlay);
-            let edge = Edge::from(_config._positioning._anchor);
+            let edge = Edge::from(config.positioning.anchor);
             window.set_anchor(edge, true);
-            if let Some(left_margin) = _config._positioning._margin {
+            if let Some(left_margin) = config.positioning.margin {
                 window.set_margin(edge, left_margin);
             }
             window.present();
 
             let window_weak = window.downgrade();
-            glib::timeout_add_local(Duration::from_millis(_config._duration), move || {
+            glib::timeout_add_local(Duration::from_millis(config.duration), move || {
                 if let Some(window) = window_weak.upgrade() {
                     window.close();
                 }
@@ -99,6 +96,6 @@ impl GlimpsOSD {
             });
         });
         let args: Vec<String> = vec![];
-        self._app.run_with_args(&args);
+        self.app.run_with_args(&args);
     }
 }

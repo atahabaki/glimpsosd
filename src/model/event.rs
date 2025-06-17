@@ -23,17 +23,18 @@ pub(crate) enum BacklightDevice {
 }
 
 impl Event {
-    pub fn _to_css_classes(&self) -> Vec<String> {
+    #[allow(dead_code)]
+    pub fn to_css_classes(&self) -> Vec<String> {
         let mut vec = Vec::<String>::new();
         match self {
-            Event::PowerProfile { new_profile } => {
+            Self::PowerProfile { new_profile } => {
                 vec.push("power_profile".into());
                 match new_profile.as_str() {
                     "power-saver" | "balanced" | "performance" => vec.push(new_profile.clone()),
                     _ => vec.push("unknown".to_owned()),
                 }
             }
-            Event::Battery {
+            Self::Battery {
                 is_present,
                 state,
                 percentage,
@@ -69,7 +70,7 @@ impl Event {
                     .into(),
                 );
             }
-            Event::Brightness { device, percent: _ } => {
+            Self::Brightness { device, percent: _ } => {
                 vec.push("brightness".into());
                 vec.push(
                     match device {

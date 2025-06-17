@@ -72,7 +72,7 @@ async fn main() {
                     let profiles = proxy.profiles().await.unwrap();
                     for profile in profiles {
                         if let Some(profile_name) = profile.get("Profile") {
-                            println!("{}", profile_name);
+                            println!("{profile_name}");
                         }
                     }
                 }
@@ -92,14 +92,14 @@ async fn main() {
                                 .and_then(|i| {
                                     names
                                         .get(if is_first { i + 1 } else { i - 1 })
-                                        .cloned()
+                                        .copied()
                                         .or_else(|| {
                                             if is_first {
                                                 names.first()
                                             } else {
                                                 names.last()
                                             }
-                                            .cloned()
+                                            .copied()
                                         })
                                 })
                         });
@@ -131,7 +131,7 @@ async fn main() {
                         None => println!("{}", proxy.get_brightness().await.unwrap()),
                     },
                     BrightnessCommand::Max => {
-                        println!("{}", proxy.get_max_brightness().await.unwrap())
+                        println!("{}", proxy.get_max_brightness().await.unwrap());
                     }
                 },
             }
