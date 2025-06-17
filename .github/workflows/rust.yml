@@ -36,8 +36,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-      run: |
-        pacman -Sy --noconfirm base-devel gtk4 gtk4-layer-shell rustup
-        rustup default stable
+        run: |
+          pacman -Sy --noconfirm base-devel gtk4 gtk4-layer-shell rustup
+          rustup default stable
       - name: Test
         run: cargo test $CARGO_ARGS
