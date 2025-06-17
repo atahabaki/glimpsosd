@@ -1,10 +1,13 @@
 use clap::Parser;
 use daemon::{app::GlimpsOSD, cli::Cli};
-use futures_lite::StreamExt;
+use logic::power::{
+    battery::{battery_percent_thread, battery_present_thread, battery_state_thread, is_battery},
+    profile::power_profile_thread,
+};
 use model::{event::Event, power_device::PowerDeviceProxy, power_profiles::PowerProfilesProxy};
-use zbus::Connection;
 
 pub(crate) mod daemon;
+pub(crate) mod logic;
 pub(crate) mod model;
 pub(crate) mod ui;
 
@@ -79,89 +82,13 @@ impl tocss::ToCSSClasses for Event {
 #[tokio::main]
 async fn main() {
     let (tx, mut rx) = tokio::sync::mpsc::channel(32);
-    let tx_power_profile = tx.clone();
 
-    tokio::spawn(async move {
-        let connection = Connection::system().await.unwrap();
-        let proxy = PowerProfilesProxy::new(&connection).await.unwrap();
-        let mut changes = proxy.receive_active_profile_changed().await;
-        while let Some(changed) = changes.next().await {
-            if let Ok(new_profile) = changed.get().await {
-                tx_power_profile
-                    .send(Event::PowerProfile { new_profile })
-                    .await
-                    .unwrap();
-            }
-        }
-    });
+    power_profile_thread(tx.clone());
 
-    let connection = Connection::system().await.unwrap();
-    let proxy = PowerDeviceProxy::new(&connection).await.unwrap();
-    let device_type = proxy.type_().await.unwrap();
-    let power_supply = proxy.power_supply().await.unwrap();
-    // According to
-    // https://upower.freedesktop.org/docs/Device.html
-    // device should met these conditions to be a Battery
-    let is_battery = power_supply && device_type == 2;
-    if is_battery {
-        let tx_power_state = tx.clone();
-        tokio::spawn(async move {
-            let mut changes = proxy.receive_state_changed().await;
-            while let Some(changed) = changes.next().await {
-                if let Ok(state) = changed.get().await {
-                    let is_present = proxy.is_present().await.unwrap();
-                    let percentage = proxy.percentage().await.unwrap();
-                    tx_power_state
-                        .send(Event::Battery {
-                            is_present,
-                            state,
-                            percentage,
-                        })
-                        .await
-                        .unwrap();
-                }
-            }
-        });
-        let tx_power_is_present = tx.clone();
-        tokio::spawn(async move {
-            let connection = Connection::system().await.unwrap();
-            let proxy = PowerDeviceProxy::new(&connection).await.unwrap();
-            let mut changes = proxy.receive_is_present_changed().await;
-            while let Some(changed) = changes.next().await {
-                if let Ok(is_present) = changed.get().await {
-                    let state = proxy.state().await.unwrap();
-                    let percentage = proxy.percentage().await.unwrap();
-                    tx_power_is_present
-                        .send(Event::Battery {
-                            is_present,
-                            state,
-                            percentage,
-                        })
-                        .await
-                        .unwrap();
-                }
-            }
-        });
-        let tx_power_percentage = tx.clone();
-        tokio::spawn(async move {
-            let connection = Connection::system().await.unwrap();
-            let proxy = PowerDeviceProxy::new(&connection).await.unwrap();
-            let mut changes = proxy.receive_percentage_changed().await;
-            while let Some(changed) = changes.next().await {
-                if let Ok(percentage) = changed.get().await {
-                    let is_present = proxy.is_present().await.unwrap();
-                    let state = proxy.state().await.unwrap();
-                    tx_power_percentage
-                        .send(Event::Battery {
-                            is_present,
-                            state,
-                            percentage,
-                        })
-                        .await
-                        .unwrap();
-                }
-            }
-        });
+    if is_battery().await {
+        battery_state_thread(tx.clone());
+        battery_percent_thread(tx.clone());
+        battery_present_thread(tx.clone());
     }
 
     while let Some(event) = rx.recv().await {
