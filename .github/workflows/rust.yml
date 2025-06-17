@@ -1,0 +1,30 @@
+name: Rust
+
+on:
+  pull_request:
+  push:
+    branches: [ "dev" ]
+
+env:
+  CARGO_TERM_COLOR: always
+  CLIPPY_OPTS: "--all-targets --all-features -- -D warnings -W clippy::pedantic -W clippy::nursery -D clippy::unchecked_duration_subtraction"
+
+jobs:
+  fmt-clippy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Format
+      run: cargo fmt --all -- --check
+    - name: Clippy
+      run: cargo clippy -- $CLIPPY_OPTS
+    - name: Clippy for tests
+      run: cargo clippy --tests -- $CLIPPY_OPTS
+    - name: Clippy for benches
+      run: cargo clippy --benches -- $CLIPPY_OPTS
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tests
+        run: cargo test
