@@ -7,24 +7,37 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  CLIPPY_OPTS: "--all-targets --all-features -- -D warnings -W clippy::pedantic -W clippy::nursery -D clippy::unchecked_duration_subtraction"
+  CARGO_ARGS: "--all-targets --all-features"
+  CLIPPY_OPTS: "-D warnings -W clippy::pedantic -W clippy::nursery -D clippy::unchecked_duration_subtraction"
 
 jobs:
   fmt-clippy:
     runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:latest
     steps:
     - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        pacman -Sy --noconfirm base-devel gtk4 gtk4-layer-shell rustup
+        rustup default stable
     - name: Format
       run: cargo fmt --all -- --check
     - name: Clippy
-      run: cargo clippy -- $CLIPPY_OPTS
+      run: cargo clippy $CARGO_ARGS -- $CLIPPY_OPTS
     - name: Clippy for tests
-      run: cargo clippy --tests -- $CLIPPY_OPTS
+      run: cargo clippy --tests $CARGO_ARGS -- $CLIPPY_OPTS
     - name: Clippy for benches
-      run: cargo clippy --benches -- $CLIPPY_OPTS
-  test:
+      run: cargo clippy --benches $CARGO_ARGS -- $CLIPPY_OPTS
+  tests:
     runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:latest
     steps:
       - uses: actions/checkout@v4
-      - name: Tests
-        run: cargo test
+      - name: Install dependencies
+      run: |
+        pacman -Sy --noconfirm base-devel gtk4 gtk4-layer-shell rustup
+        rustup default stable
+      - name: Test
+        run: cargo test $CARGO_ARGS
