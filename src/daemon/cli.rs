@@ -114,7 +114,8 @@ impl Cli {
                                     Ok(contents) => _Parameter::FromFile(contents),
                                     Err(e) => {
                                         eprintln!(
-                                            "Couldn't read file located at {path:?} cause: {e}"
+                                            "Couldn't read file located at {:?} cause: {e}",
+                                            path.display()
                                         );
                                         _Parameter::Default
                                     }
