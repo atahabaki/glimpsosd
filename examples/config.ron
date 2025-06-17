@@ -1,19 +1,19 @@
 (
-    _duration: 500,
-    _positioning: (
-        _anchor: Bottom,
-        _margin: Some(50),
+    duration: 1000,
+    positioning: (
+        anchor: Bottom,
+        margin: Some(50),
     ),
-    _osdtext: (
-        _power_profile_text: (
-            _power_saver: "\u{f236}  Power-Saver",
-            _balanced: "\u{f24e}  Balanced",
-            _performance: "\u{f06d} Performance",
+    osd: (
+        power_profile: (
+            power_saver: "\u{f236}  Power-Saver",
+            balanced: "\u{f24e}  Balanced",
+            performance: "\u{f06d} Performance",
         ),
-        _battery_text: (
-            _present_charged_text: "\u{f0079}",
-            _present_empty_text: "\u{f007a}",
-            _present_charging_state_text: (
+        battery: (
+            present_charged: "\u{f0079}",
+            present_empty: "\u{f007a}",
+            present_charging: (
                 ("\u{f089c}  Charging",
                  "\u{f0086}  Charging",
                  "\u{f0087}  Charging",
@@ -25,7 +25,7 @@
                  "\u{f008b}  Charging",
                  "\u{f0085}  Charging",
                  ), "\u{f0091} Charging"),
-            _present_discharging_state_text: (
+            present_discharging: (
                ("\u{f007a} Discharging",
                 "\u{f007b} Discharging",
                 "\u{f007c} Discharging",
@@ -37,7 +37,7 @@
                 "\u{f0082} Discharging",
                 "\u{f0079} Discharging",
                 ), "\u{f0091} Discharging"),
-            _present_pending_charge_state_text: (
+            present_pending_charge: (
                ("\u{f007a} Pending Charge",
                 "\u{f007b} Pending Charge",
                 "\u{f007c} Pending Charge",
@@ -49,7 +49,7 @@
                 "\u{f0082} Pending Charge",
                 "\u{f0079} Pending Charge",
                 ), "\u{f0091} Pending Charge"),
-            _present_pending_discharge_state_text: (
+            present_pending_discharge: (
                ("\u{f007a} Pending Discharge",
                 "\u{f007b} Pending Discharge",
                 "\u{f007c} Pending Discharge",
@@ -61,8 +61,8 @@
                 "\u{f0082} Pending Discharge",
                 "\u{f0079} Pending Discharge",
                 ), "\u{f0091} Pending Discharge"),
-            _unknown_state_text: "\u{f0091} Unclear State",
-            _removed_state_text: "\u{f17e8} Battery Removed",
+            unknown: "\u{f0091} Unclear State",
+            removed: "\u{f17e8} Battery Removed",
         ),
     ),
 )
