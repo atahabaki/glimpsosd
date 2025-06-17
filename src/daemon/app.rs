@@ -68,10 +68,18 @@ impl GlimpsOSD {
                     is_present: _,
                     state: _,
                     percentage,
-                } => window.set_child(Some(&ui::osd_battery(
+                } if percentage.is_some() => window.set_child(Some(&ui::osd_battery(
                     event.to_css_classes(),
                     config.osd.battery.get_based_on_new_battery_status(&event),
-                    *percentage / 100_f64,
+                    percentage.unwrap() / 100_f64,
+                ))),
+                Event::Battery {
+                    is_present: _,
+                    state: _,
+                    percentage: _,
+                } => window.set_child(Some(&ui::osd_battery_without_level(
+                    event.to_css_classes(),
+                    config.osd.battery.get_based_on_new_battery_status(&event),
                 ))),
                 Event::Brightness {
                     device: _,

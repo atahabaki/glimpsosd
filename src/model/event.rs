@@ -8,7 +8,7 @@ pub enum Event {
     Battery {
         is_present: bool,
         state: u32,
-        percentage: f64,
+        percentage: Option<f64>,
     },
     Brightness {
         device: BacklightDevice,
@@ -54,20 +54,21 @@ impl Event {
                     .into(),
                 );
                 vec.push(
-                    match percentage {
-                        0_f64..10_f64 => "one",
-                        10_f64..20_f64 => "two",
-                        20_f64..30_f64 => "three",
-                        30_f64..40_f64 => "four",
-                        40_f64..50_f64 => "five",
-                        50_f64..60_f64 => "six",
-                        60_f64..70_f64 => "seven",
-                        70_f64..80_f64 => "eight",
-                        80_f64..90_f64 => "nine",
-                        90_f64..100_f64 => "ten",
-                        _ => "unknown",
-                    }
-                    .into(),
+                    percentage
+                        .map_or("unknown", |p| match p {
+                            0_f64..10_f64 => "one",
+                            10_f64..20_f64 => "two",
+                            20_f64..30_f64 => "three",
+                            30_f64..40_f64 => "four",
+                            40_f64..50_f64 => "five",
+                            50_f64..60_f64 => "six",
+                            60_f64..70_f64 => "seven",
+                            70_f64..80_f64 => "eight",
+                            80_f64..90_f64 => "nine",
+                            90_f64..100_f64 => "ten",
+                            _ => "unknown",
+                        })
+                        .into(),
                 );
             }
             Self::Brightness { device, percent: _ } => {

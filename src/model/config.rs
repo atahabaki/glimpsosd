@@ -161,19 +161,13 @@ impl BatteryText {
             } => match is_present {
                 true => match state {
                     1 | 2 | 5 | 6 => {
-                        let number = match percentage {
-                            0_f64..10_f64 => Some(0),
-                            10_f64..20_f64 => Some(1),
-                            20_f64..30_f64 => Some(2),
-                            30_f64..40_f64 => Some(3),
-                            40_f64..50_f64 => Some(4),
-                            50_f64..60_f64 => Some(5),
-                            60_f64..70_f64 => Some(6),
-                            70_f64..80_f64 => Some(7),
-                            80_f64..90_f64 => Some(8),
-                            90_f64..100_f64 => Some(9),
-                            _ => None,
-                        };
+                        let number = percentage.map_or(None, |p| {
+                            if p <= 0_f64 || p >= 100_f64 {
+                                #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+                                return Some((p / 100_f64) as usize);
+                            }
+                            None
+                        });
                         match number {
                             Some(number) if state == &1 => {
                                 self.present_charging.0.get(number).unwrap().to_owned()

@@ -23,7 +23,7 @@ pub fn battery_state_thread(tx: Sender<Event>) {
         while let Some(changed) = changes.next().await {
             if let Ok(state) = changed.get().await {
                 let is_present = proxy.is_present().await.unwrap();
-                let percentage = proxy.percentage().await.unwrap();
+                let percentage = proxy.percentage().await.ok();
                 tx.send(Event::Battery {
                     is_present,
                     state,
@@ -44,7 +44,7 @@ pub fn battery_present_thread(tx: Sender<Event>) {
         while let Some(changed) = changes.next().await {
             if let Ok(is_present) = changed.get().await {
                 let state = proxy.state().await.unwrap();
-                let percentage = proxy.percentage().await.unwrap();
+                let percentage = proxy.percentage().await.ok();
                 tx.send(Event::Battery {
                     is_present,
                     state,
@@ -69,7 +69,7 @@ pub fn battery_percent_thread(tx: Sender<Event>) {
                 tx.send(Event::Battery {
                     is_present,
                     state,
-                    percentage,
+                    percentage: Some(percentage),
                 })
                 .await
                 .unwrap();
