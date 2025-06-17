@@ -1,6 +1,5 @@
 use std::time::Duration;
 
-use crate::tocss::ToCSSClasses;
 use crate::ui;
 use crate::{Cli, Event};
 use gtk::Application;
@@ -58,7 +57,7 @@ impl GlimpsOSD {
             match &event {
                 Event::PowerProfile { new_profile } => {
                     window.set_child(Some(&ui::osd_power_profile(
-                        event.to_css_classes(),
+                        event._to_css_classes(),
                         _config
                             ._osdtext
                             ._power_profile_text
@@ -70,7 +69,7 @@ impl GlimpsOSD {
                     state: _,
                     percentage,
                 } => window.set_child(Some(&ui::osd_battery(
-                    event.to_css_classes(),
+                    event._to_css_classes(),
                     _config
                         ._osdtext
                         ._battery_text
