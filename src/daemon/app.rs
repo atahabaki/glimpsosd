@@ -10,7 +10,7 @@ use gtkls::{Edge, Layer, LayerShell};
 
 use super::APP_ID;
 
-pub(crate) struct GlimpsOSD {
+pub struct GlimpsOSD {
     pub app: Application,
 }
 
@@ -19,7 +19,7 @@ pub(crate) struct GlimpsOSD {
 /// --no-fallback
 impl Default for GlimpsOSD {
     fn default() -> Self {
-        GlimpsOSD {
+        Self {
             app: gtk::Application::builder().application_id(APP_ID).build(),
         }
     }
@@ -27,7 +27,7 @@ impl Default for GlimpsOSD {
 
 impl GlimpsOSD {
     pub(crate) fn new() -> Self {
-        GlimpsOSD {
+        Self {
             app: gtk::Application::builder().application_id(APP_ID).build(),
         }
     }

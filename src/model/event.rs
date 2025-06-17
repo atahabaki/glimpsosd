@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) enum Event {
+pub enum Event {
     PowerProfile {
         new_profile: String,
     },
@@ -17,7 +17,7 @@ pub(crate) enum Event {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) enum BacklightDevice {
+pub enum BacklightDevice {
     Keyboard,
     Display,
 }

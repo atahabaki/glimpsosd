@@ -1,1 +1,1 @@
-pub(crate) mod power;
+pub mod power;

@@ -4,7 +4,7 @@ use super::event::Event;
 
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
-pub(crate) struct Configuration {
+pub struct Configuration {
     pub duration: u64,
     pub positioning: Positioning,
     pub osd: OsdText,
@@ -12,13 +12,13 @@ pub(crate) struct Configuration {
 
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
-pub(crate) struct Positioning {
+pub struct Positioning {
     pub anchor: Anchor,
     pub margin: Option<i32>,
 }
 
 #[derive(Debug, Default, Deserialize)]
-pub(crate) enum Anchor {
+pub enum Anchor {
     Top,
     #[default]
     Bottom,
@@ -39,14 +39,14 @@ impl From<Anchor> for gtkls::Edge {
 
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
-pub(crate) struct OsdText {
+pub struct OsdText {
     pub power_profile: PowerProfileText,
     pub battery: BatteryText,
 }
 
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
-pub(crate) struct PowerProfileText {
+pub struct PowerProfileText {
     pub power_saver: String,
     pub balanced: String,
     pub performance: String,
@@ -66,7 +66,7 @@ impl PowerProfileText {
 
 impl Default for PowerProfileText {
     fn default() -> Self {
-        PowerProfileText {
+        Self {
             power_saver: "  Power-Saver".to_owned(),
             balanced: "  Balanced".to_owned(),
             performance: " Performance".to_owned(),
@@ -76,7 +76,7 @@ impl Default for PowerProfileText {
 
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
-pub(crate) struct BatteryText {
+pub struct BatteryText {
     pub present_charged: String,
     pub present_empty: String,
     pub present_charging: ([String; 10], String),
@@ -137,7 +137,7 @@ impl Default for BatteryText {
             "󰂋  Charging".to_string(),
             "󰂅  Charging".to_string(),
         ];
-        BatteryText {
+        Self {
             present_charged: "󰁹".to_owned(),
             present_empty: "󰁺".to_owned(),
             present_charging: (charging_icons, "󰂑 Charging".to_owned()),

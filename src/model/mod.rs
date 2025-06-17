@@ -1,5 +1,5 @@
-pub(crate) mod config;
-pub(crate) mod event;
-pub(crate) mod keyboard_backlight;
-pub(crate) mod power_device;
-pub(crate) mod power_profiles;
+pub mod config;
+pub mod event;
+pub mod keyboard_backlight;
+pub mod power_device;
+pub mod power_profiles;

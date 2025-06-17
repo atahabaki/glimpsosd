@@ -6,7 +6,7 @@ use crate::{daemon::OSD_CSS, model::config::Configuration};
 
 #[derive(Parser)]
 #[command(about, version)]
-pub(crate) struct Cli {
+pub struct Cli {
     /// Use this style.css file instead.
     /// By default, glimpsosd uses `XDG_CONFIG_HOME/glimpsosd/style.css`
     #[arg(short, long, value_name = "CSS_FILE", env = "GLIMPSOSD_STYLE_FILE")]
@@ -73,10 +73,16 @@ impl Cli {
                         match Self::_read_file_contents(path.clone()) {
                             Ok(contents) => _Parameter::FromFile(contents),
                             Err(e) if no_fallback => {
-                                panic!("Couldn't read file located at {path:?} cause: {e}")
+                                panic!(
+                                    "Couldn't read file located at {:?} cause: {e}",
+                                    path.display()
+                                )
                             }
                             Err(e) => {
-                                eprintln!("Couldn't read file located at {path:?} cause: {e}");
+                                eprintln!(
+                                    "Couldn't read file located at {:?} cause: {e}",
+                                    path.display()
+                                );
                                 _Parameter::Default
                             }
                         }
@@ -90,10 +96,16 @@ impl Cli {
             |path| match Self::_read_file_contents(path.clone()) {
                 Ok(contents) => _Parameter::FromFile(contents),
                 Err(e) if no_fallback => {
-                    panic!("Couldn't read file located at {path:?} cause: {e}")
+                    panic!(
+                        "Couldn't read file located at {:?} cause: {e}",
+                        path.display()
+                    )
                 }
                 Err(e) => {
-                    eprintln!("Couldn't read file located at {path:?} cause: {e}");
+                    eprintln!(
+                        "Couldn't read file located at {:?} cause: {e}",
+                        path.display()
+                    );
                     Self::_find_xdg_config_home().map_or(_Parameter::Default, |path| {
                         path.map_or(_Parameter::Default, |path| {
                             let path = path.join(filename);

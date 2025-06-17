@@ -4,7 +4,7 @@ use zbus::Connection;
 
 use crate::{Event, PowerDeviceProxy};
 
-pub(crate) async fn is_battery() -> bool {
+pub async fn is_battery() -> bool {
     let connection = Connection::system().await.unwrap();
     let proxy = PowerDeviceProxy::new(&connection).await.unwrap();
     let device_type = proxy.type_().await.unwrap();
@@ -15,7 +15,7 @@ pub(crate) async fn is_battery() -> bool {
     power_supply && device_type == 2
 }
 
-pub(crate) fn battery_state_thread(tx: Sender<Event>) {
+pub fn battery_state_thread(tx: Sender<Event>) {
     tokio::spawn(async move {
         let connection = Connection::system().await.unwrap();
         let proxy = PowerDeviceProxy::new(&connection).await.unwrap();
@@ -36,7 +36,7 @@ pub(crate) fn battery_state_thread(tx: Sender<Event>) {
     });
 }
 
-pub(crate) fn battery_present_thread(tx: Sender<Event>) {
+pub fn battery_present_thread(tx: Sender<Event>) {
     tokio::spawn(async move {
         let connection = Connection::system().await.unwrap();
         let proxy = PowerDeviceProxy::new(&connection).await.unwrap();
@@ -57,7 +57,7 @@ pub(crate) fn battery_present_thread(tx: Sender<Event>) {
     });
 }
 
-pub(crate) fn battery_percent_thread(tx: Sender<Event>) {
+pub fn battery_percent_thread(tx: Sender<Event>) {
     tokio::spawn(async move {
         let connection = Connection::system().await.unwrap();
         let proxy = PowerDeviceProxy::new(&connection).await.unwrap();

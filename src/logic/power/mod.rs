@@ -1,2 +1,2 @@
-pub(crate) mod battery;
-pub(crate) mod profile;
+pub mod battery;
+pub mod profile;

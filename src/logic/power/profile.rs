@@ -4,7 +4,7 @@ use zbus::Connection;
 
 use crate::{Event, PowerProfilesProxy};
 
-pub(crate) fn power_profile_thread(tx: Sender<Event>) {
+pub fn power_profile_thread(tx: Sender<Event>) {
     tokio::spawn(async move {
         let connection = Connection::system().await.unwrap();
         let proxy = PowerProfilesProxy::new(&connection).await.unwrap();

@@ -1,4 +1,4 @@
-pub(crate) fn osd_battery(
+pub fn osd_battery(
     css_classes: Vec<String>,
     display_text: String,
     fraction: f64,
