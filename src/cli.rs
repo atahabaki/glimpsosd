@@ -31,7 +31,6 @@ enum PowerProfileCommand {
     /// Set or get power profile
     Active {
         /// Set power profile
-        #[arg(short, long)]
         profile: Option<String>,
     },
 }
@@ -53,8 +52,7 @@ enum BrightnessCommand {
     /// Set or get current brightness
     Current {
         /// Set current brightness
-        #[arg(short, long)]
-        set: Option<i32>,
+        level: Option<i32>,
     },
     /// Get max brightness
     Max,
@@ -120,7 +118,7 @@ async fn main() {
             match brightness {
                 BrightnessDevice::Display(_brightness_command) => todo!(),
                 BrightnessDevice::Keyboard(brightness_command) => match brightness_command {
-                    BrightnessCommand::Current { set } => match set {
+                    BrightnessCommand::Current { level } => match level {
                         Some(brightness) => {
                             proxy.set_brightness(brightness).await.unwrap();
                             todo!(
