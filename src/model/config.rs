@@ -138,8 +138,8 @@ impl Default for BatteryText {
             "󰂅  Charging".to_string(),
         ];
         Self {
-            present_charged: "󰁹".to_owned(),
-            present_empty: "󰁺".to_owned(),
+            present_charged: "󰁹 Fully Charged".to_owned(),
+            present_empty: "󰁺 Empty Battery".to_owned(),
             present_charging: (charging_icons, "󰂑 Charging".to_owned()),
             present_discharging: (discharging_icons, "󰂑 Discharging".to_owned()),
             present_pending_charge: (pending_charge_icons, "󰂑 Pending Charge".to_owned()),
