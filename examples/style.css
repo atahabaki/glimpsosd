@@ -110,6 +110,7 @@ glimpsosd label.power_profile.performance,
 glimpsosd progressbar.volume.max text,
 glimpsosd .eight text,
 glimpsosd .nine text,
+glimpsosd .fully-charged text,
 glimpsosd .ten text {
     color: var(--green);
 }
@@ -139,6 +140,7 @@ glimpsosd .seven trough progress {
 glimpsosd progressbar.volume.max trough progress,
 glimpsosd .eight trough progress,
 glimpsosd .nine trough progress,
-glimpsosd .ten trough progress {
+glimpsosd .ten trough progress,
+glimpsosd .fully-charged trough progress {
     background-color: var(--green);
 }
